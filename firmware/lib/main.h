@@ -4,9 +4,11 @@
 #include <EncButton.h>
 #include "settings.h"
 #include "ultrasonic.h"
+#include "level.h"
 
 Button btnCheck(PIN_BTN_CHECK);
 Ultrasonic ultrasonic(PIN_ULTRASONIC_SENSOR_TRIGGER, PIN_ULTRASONIC_SENSOR_ECHO);
+Level level;
 
 void btnCheckCallback()
 {
@@ -14,14 +16,7 @@ void btnCheckCallback()
   {
   case EB_PRESS:
     float distance = ultrasonic.getDistance();
-    if (distance < 0)
-    {
-      Serial.println('Failed to read ultrasonic sensor');
-    }
-    else
-    {
-      Serial.println(distance);
-    }
+    level.setValue(distance);
     break;
   }
 }
@@ -30,6 +25,7 @@ void setup()
 {
   Serial.begin(SERIAL_PORT);
   btnCheck.attach(btnCheckCallback);
+  level.setup();
 }
 
 void loop()
