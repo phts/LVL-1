@@ -2,6 +2,7 @@
 #define main_h
 
 #include <EncButton.h>
+#include "config.h"
 #include "settings.h"
 #include "ultrasonic.h"
 #include "level.h"

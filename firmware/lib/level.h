@@ -1,6 +1,7 @@
 #ifndef level_h
 #define level_h
 
+#include "config.h"
 #include "settings.h"
 
 class Level
