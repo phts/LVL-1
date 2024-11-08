@@ -10,12 +10,14 @@
 #include "console.h"
 #include "indicator.h"
 #include "led.h"
+#include "wifi.h"
 
 Button btnCheck(Config::PIN_BTN_CHECK);
 Ultrasonic ultrasonic(Config::PIN_ULTRASONIC_SENSOR_TRIGGER, Config::PIN_ULTRASONIC_SENSOR_ECHO);
 Led warningLed(Config::PIN_LED_WARNING);
 Indicator indicator(&warningLed, Config::PIN_INDICATOR);
 Level level(&indicator, LEVEL_WARNING);
+Wifi wifi(&indicator, 10, 9);
 
 TimerMs mainTimer(CHECK_INTERVAL);
 
@@ -48,6 +50,7 @@ void setup()
   btnCheck.attach(btnCheckCallback);
   level.setup();
   mainTimer.start();
+  wifi.setup();
 }
 
 void loop()
@@ -58,6 +61,7 @@ void loop()
   {
     check();
   }
+  wifi.tick();
 }
 
 #endif
