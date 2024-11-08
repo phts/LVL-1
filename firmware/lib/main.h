@@ -9,7 +9,7 @@
 
 Button btnCheck(PIN_BTN_CHECK);
 Ultrasonic ultrasonic(PIN_ULTRASONIC_SENSOR_TRIGGER, PIN_ULTRASONIC_SENSOR_ECHO);
-Level level;
+Level level(PIN_LED_WARNING, LEVEL_WARNING);
 
 void btnCheckCallback()
 {
