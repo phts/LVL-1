@@ -1,10 +1,13 @@
 #ifndef level_h
 #define level_h
 
+#include "indicator.h"
+#include "console.h"
+
 class Level
 {
 public:
-  Level(byte _pinLedWarning, float _warningLevel)
+  Level(byte _pinIndicator, byte _pinLedWarning, int _warningLevel) : indicator(_pinIndicator)
   {
     pinLedWarning = _pinLedWarning;
     warningLevel = _warningLevel;
@@ -12,27 +15,22 @@ public:
 
   void setup()
   {
+    indicator.setup();
     pinMode(pinLedWarning, OUTPUT);
   }
 
-  void setValue(float _value)
+  void setValue(int value)
   {
-    float value = _value;
-    bool warning = value < warningLevel;
+    console.log(F("Level: "), value);
+    bool warning = value >= warningLevel;
     digitalWrite(pinLedWarning, warning ? HIGH : LOW);
-    if (value < 0)
-    {
-      Serial.println('Failed to read ultrasonic sensor');
-    }
-    else
-    {
-      Serial.println(value);
-    }
+    indicator.setLevel(value);
   }
 
 private:
+  Indicator indicator;
   byte pinLedWarning;
-  float warningLevel;
+  int warningLevel;
 };
 
 #endif

@@ -6,10 +6,12 @@
 #include "settings.h"
 #include "ultrasonic.h"
 #include "level.h"
+#include "helpers.h"
+#include "console.h"
 
 Button btnCheck(PIN_BTN_CHECK);
 Ultrasonic ultrasonic(PIN_ULTRASONIC_SENSOR_TRIGGER, PIN_ULTRASONIC_SENSOR_ECHO);
-Level level(PIN_LED_WARNING, LEVEL_WARNING);
+Level level(PIN_INDICATOR, PIN_LED_WARNING, LEVEL_WARNING);
 
 void btnCheckCallback()
 {
@@ -17,7 +19,16 @@ void btnCheckCallback()
   {
   case EB_PRESS:
     float distance = ultrasonic.getDistance();
-    level.setValue(distance);
+    if (distance < 0)
+    {
+      console.log(F("Failed to read ultrasonic sensor"));
+      break;
+    }
+    else
+    {
+      console.log(F("Distance: "), distance);
+    }
+    level.setValue(helpers.distanceToLevel(distance));
     break;
   }
 }
