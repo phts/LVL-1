@@ -3,17 +3,22 @@
 
 #include "console.h"
 
+#define INDICATOR_WARN_OFF 0
+#define INDICATOR_WARN_ON 1
+
 class Indicator
 {
 public:
-  Indicator(byte _pinIndicator)
+  Indicator(byte _pinIndicator, byte _pinLedWarning)
   {
     pinIndicator = _pinIndicator;
+    pinLedWarning = _pinLedWarning;
   }
 
   void setup()
   {
     pinMode(pinIndicator, OUTPUT);
+    pinMode(pinLedWarning, OUTPUT);
   }
 
   void setLevel(byte value)
@@ -23,8 +28,24 @@ public:
     console.log(F("PWM: "), pwm);
   }
 
+  void setWarning(byte type)
+  {
+    switch (type)
+    {
+    case INDICATOR_WARN_OFF:
+      digitalWrite(pinLedWarning, LOW);
+      break;
+    case INDICATOR_WARN_ON:
+      digitalWrite(pinLedWarning, HIGH);
+      break;
+    default:
+      break;
+    }
+  }
+
 private:
   byte pinIndicator;
+  byte pinLedWarning;
 };
 
 #endif

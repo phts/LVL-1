@@ -8,10 +8,12 @@
 #include "level.h"
 #include "helpers.h"
 #include "console.h"
+#include "indicator.h"
 
 Button btnCheck(PIN_BTN_CHECK);
 Ultrasonic ultrasonic(PIN_ULTRASONIC_SENSOR_TRIGGER, PIN_ULTRASONIC_SENSOR_ECHO);
-Level level(PIN_INDICATOR, PIN_LED_WARNING, LEVEL_WARNING);
+Indicator indicator(PIN_INDICATOR, PIN_LED_WARNING);
+Level level(&indicator, LEVEL_WARNING);
 
 void btnCheckCallback()
 {

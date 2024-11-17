@@ -7,29 +7,27 @@
 class Level
 {
 public:
-  Level(byte _pinIndicator, byte _pinLedWarning, int _warningLevel) : indicator(_pinIndicator)
+  Level(Indicator *_indicator, int _warningLevel)
   {
-    pinLedWarning = _pinLedWarning;
+    indicator = _indicator;
     warningLevel = _warningLevel;
   }
 
   void setup()
   {
-    indicator.setup();
-    pinMode(pinLedWarning, OUTPUT);
+    indicator->setup();
   }
 
   void setValue(int value)
   {
     console.log(F("Level: "), value);
     bool warning = value >= warningLevel;
-    digitalWrite(pinLedWarning, warning ? HIGH : LOW);
-    indicator.setLevel(value);
+    indicator->setLevel(value);
+    indicator->setWarning(warning ? INDICATOR_WARN_ON : INDICATOR_WARN_OFF);
   }
 
 private:
-  Indicator indicator;
-  byte pinLedWarning;
+  Indicator *indicator;
   int warningLevel;
 };
 
