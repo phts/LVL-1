@@ -11,10 +11,10 @@
 #include "indicator.h"
 #include "led.h"
 
-Button btnCheck(PIN_BTN_CHECK);
-Ultrasonic ultrasonic(PIN_ULTRASONIC_SENSOR_TRIGGER, PIN_ULTRASONIC_SENSOR_ECHO);
-Led warningLed(PIN_LED_WARNING);
-Indicator indicator(&warningLed, PIN_INDICATOR);
+Button btnCheck(Config::PIN_BTN_CHECK);
+Ultrasonic ultrasonic(Config::PIN_ULTRASONIC_SENSOR_TRIGGER, Config::PIN_ULTRASONIC_SENSOR_ECHO);
+Led warningLed(Config::PIN_LED_WARNING);
+Indicator indicator(&warningLed, Config::PIN_INDICATOR);
 Level level(&indicator, LEVEL_WARNING);
 
 void btnCheckCallback()
