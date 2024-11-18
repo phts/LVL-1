@@ -2,10 +2,9 @@
 #define indicator_h
 
 #include <TimerMs.h>
+#include "settings.h"
 #include "console.h"
 #include "led.h"
-
-#define SETTINGS_INDICATOR_ERROR_BLINK_INTERVAL 500
 
 class Indicator
 {
@@ -14,7 +13,7 @@ public:
   static const byte WARN_ON = 1;
   static const byte WARN_GENERIC_ERROR = 2;
 
-  Indicator(Led *_warningLed, byte _pinIndicator) : blinkTimer(SETTINGS_INDICATOR_ERROR_BLINK_INTERVAL)
+  Indicator(Led *_warningLed, byte _pinIndicator) : blinkTimer(INDICATOR_ERROR_BLINK_INTERVAL)
   {
     warningLed = _warningLed;
     pinIndicator = _pinIndicator;
