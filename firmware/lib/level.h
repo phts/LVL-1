@@ -23,7 +23,7 @@ public:
     console.log(F("Level: "), value);
     bool warning = value >= warningLevel;
     indicator->setLevel(value);
-    indicator->setWarning(warning ? INDICATOR_WARN_ON : INDICATOR_WARN_OFF);
+    indicator->setWarning(warning ? Indicator::WARN_ON : Indicator::WARN_OFF);
   }
 
 private:

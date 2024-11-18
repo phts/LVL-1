@@ -5,15 +5,15 @@
 #include "console.h"
 #include "led.h"
 
-#define INDICATOR_WARN_OFF 0
-#define INDICATOR_WARN_ON 1
-#define INDICATOR_WARN_GENERIC_ERROR 2
-
 #define SETTINGS_INDICATOR_ERROR_BLINK_INTERVAL 500
 
 class Indicator
 {
 public:
+  static const byte WARN_OFF = 0;
+  static const byte WARN_ON = 1;
+  static const byte WARN_GENERIC_ERROR = 2;
+
   Indicator(Led *_warningLed, byte _pinIndicator) : blinkTimer(SETTINGS_INDICATOR_ERROR_BLINK_INTERVAL)
   {
     warningLed = _warningLed;
@@ -46,13 +46,13 @@ public:
     blinkTimer.stop();
     switch (type)
     {
-    case INDICATOR_WARN_OFF:
+    case WARN_OFF:
       warningLed->write(LOW);
       break;
-    case INDICATOR_WARN_ON:
+    case WARN_ON:
       warningLed->write(HIGH);
       break;
-    case INDICATOR_WARN_GENERIC_ERROR:
+    case WARN_GENERIC_ERROR:
       blinkTimer.start();
       break;
     default:

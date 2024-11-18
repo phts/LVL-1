@@ -26,7 +26,7 @@ void btnCheckCallback()
     if (distance < 0)
     {
       console.log(F("Failed to read ultrasonic sensor"));
-      indicator.setWarning(INDICATOR_WARN_GENERIC_ERROR);
+      indicator.setWarning(Indicator::WARN_GENERIC_ERROR);
       break;
     }
     else
