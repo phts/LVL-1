@@ -13,6 +13,21 @@ public:
     Serial.print(str);
     Serial.println(value);
   }
+  void log(String str, float value)
+  {
+    Serial.print(str);
+    Serial.println(value);
+  }
+  void log(String str, float array[], int len)
+  {
+    Serial.print(str);
+    for (byte i = 0; i < len; i++)
+    {
+      Serial.print(array[i]);
+      Serial.print(F(", "));
+    }
+    Serial.println();
+  }
 };
 
 Console console;
