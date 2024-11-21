@@ -1,7 +1,7 @@
 #ifndef settings_h
 #define settings_h
 
-#define SERIAL_PORT 9600
+#define SERIAL_PORT 115200
 
 #define CHECK_INTERVAL 600000
 
