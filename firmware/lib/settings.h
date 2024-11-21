@@ -3,6 +3,8 @@
 
 #define SERIAL_PORT 9600
 
+#define CHECK_INTERVAL (4 * 60 * 60 * 1000) // 4h
+
 #define LEVEL_WARNING 83 // 0--100
 
 #define DISTANCE_FOR_EMPTY 220
