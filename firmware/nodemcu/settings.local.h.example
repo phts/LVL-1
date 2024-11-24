@@ -1,0 +1,11 @@
+#ifndef settings_local_h
+#define settings_local_h
+
+#define DEBUG true
+
+#define WIFI_NAME F("xxx")
+#define WIFI_PASSWORD F("xxx")
+
+#define LEVEL_POST_ENDPOINT F("http://example.com")
+
+#endif
