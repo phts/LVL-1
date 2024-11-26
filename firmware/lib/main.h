@@ -14,8 +14,8 @@
 
 Button btnCheck(Config::PIN_BTN_CHECK);
 Ultrasonic ultrasonic(Config::PIN_ULTRASONIC_SENSOR_TRIGGER, Config::PIN_ULTRASONIC_SENSOR_ECHO);
-Led warningLed(Config::PIN_LED_WARNING);
-Indicator indicator(&warningLed, Config::PIN_INDICATOR);
+Led led(Config::PIN_LED);
+Indicator indicator(&led, Config::PIN_INDICATOR);
 Level level(&indicator, LEVEL_WARNING);
 
 TimerMs mainTimer(CHECK_INTERVAL);
@@ -29,7 +29,7 @@ void progressCallback(String resp)
   if (resp == TRANSPORT_SUCCESS_RESPONSE)
   {
     indicator.setLevel(100);
-    indicator.setWarning(Indicator::WARN_OFF);
+    indicator.setLed(Indicator::LED_OFF);
   }
 }
 Wifi wifi(&indicator, Config::PIN_WIFI_RX, Config::PIN_WIFI_TX, progressCallback);
@@ -40,7 +40,7 @@ void check()
   if (distance < 0)
   {
     console.log(F("Failed to read ultrasonic sensor"));
-    indicator.setWarning(Indicator::WARN_GENERIC_ERROR);
+    indicator.setLed(Indicator::LED_ERROR);
     return;
   }
   console.log(F("Distance: "), distance);

@@ -10,7 +10,7 @@ public:
   static const byte PIN_BTN_CHECK = 8;
   static const byte PIN_WIFI_RX = 10;
   static const byte PIN_WIFI_TX = 11;
-  static const byte PIN_LED_WARNING = 12;
+  static const byte PIN_LED = 12;
 };
 
 #endif

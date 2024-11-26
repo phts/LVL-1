@@ -19,7 +19,7 @@ public:
   setup()
   {
     softSerial.begin(SERIAL_PORT);
-    indicator->setWarning(Indicator::WARN_GENERIC_ERROR);
+    indicator->setLed(Indicator::LED_ERROR);
     transport.exec(F("!connect"), progressCallback);
   }
 

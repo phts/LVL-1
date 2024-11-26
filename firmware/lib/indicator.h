@@ -9,27 +9,27 @@
 class Indicator
 {
 public:
-  static const byte WARN_OFF = 0;
-  static const byte WARN_ON = 1;
-  static const byte WARN_GENERIC_ERROR = 2;
+  static const byte LED_OFF = 0;
+  static const byte LED_WARNING = 1;
+  static const byte LED_ERROR = 2;
 
-  Indicator(Led *_warningLed, byte _pinIndicator) : blinkTimer(INDICATOR_ERROR_BLINK_INTERVAL)
+  Indicator(Led *_led, byte _pinIndicator) : ledBlinkTimer(INDICATOR_LED_ERROR_BLINK_INTERVAL)
   {
-    warningLed = _warningLed;
+    led = _led;
     pinIndicator = _pinIndicator;
   }
 
   void setup()
   {
     pinMode(pinIndicator, OUTPUT);
-    warningLed->setup();
+    led->setup();
   }
 
   void tick()
   {
-    if (blinkTimer.tick())
+    if (ledBlinkTimer.tick())
     {
-      warningLed->toggle();
+      led->toggle();
     }
   }
 
@@ -40,19 +40,19 @@ public:
     console.log(F("PWM: "), pwm);
   }
 
-  void setWarning(byte type)
+  void setLed(byte type)
   {
-    blinkTimer.stop();
+    ledBlinkTimer.stop();
     switch (type)
     {
-    case WARN_OFF:
-      warningLed->write(LOW);
+    case LED_OFF:
+      led->write(LOW);
       break;
-    case WARN_ON:
-      warningLed->write(HIGH);
+    case LED_WARNING:
+      led->write(HIGH);
       break;
-    case WARN_GENERIC_ERROR:
-      blinkTimer.start();
+    case LED_ERROR:
+      ledBlinkTimer.start();
       break;
     default:
       break;
@@ -60,9 +60,9 @@ public:
   }
 
 private:
-  Led *warningLed;
+  Led *led;
   byte pinIndicator;
-  TimerMs blinkTimer;
+  TimerMs ledBlinkTimer;
 };
 
 #endif
