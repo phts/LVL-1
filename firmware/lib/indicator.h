@@ -12,8 +12,9 @@ public:
   static const byte LED_OFF = 0;
   static const byte LED_WARNING = 1;
   static const byte LED_ERROR = 2;
+  static const byte LED_INFO = 3;
 
-  Indicator(Led *_led, byte _pinIndicator) : ledBlinkTimer(INDICATOR_LED_ERROR_BLINK_INTERVAL)
+  Indicator(Led *_led, byte _pinIndicator)
   {
     led = _led;
     pinIndicator = _pinIndicator;
@@ -23,13 +24,19 @@ public:
   {
     pinMode(pinIndicator, OUTPUT);
     led->setup();
+    ledImpulseTimer.setTimerMode();
   }
 
   void tick()
   {
     if (ledBlinkTimer.tick())
     {
-      led->toggle();
+      ledImpulseTimer.start();
+      led->write(HIGH);
+    }
+    if (ledImpulseTimer.tick())
+    {
+      led->write(LOW);
     }
   }
 
@@ -52,6 +59,13 @@ public:
       led->write(HIGH);
       break;
     case LED_ERROR:
+      ledImpulseTimer.setTime(INDICATOR_LED_ERROR_IMPULSE_INTERVAL);
+      ledBlinkTimer.setTime(INDICATOR_LED_ERROR_BLINK_INTERVAL);
+      ledBlinkTimer.start();
+      break;
+    case LED_INFO:
+      ledImpulseTimer.setTime(INDICATOR_LED_INFO_IMPULSE_INTERVAL);
+      ledBlinkTimer.setTime(INDICATOR_LED_INFO_BLINK_INTERVAL);
       ledBlinkTimer.start();
       break;
     default:
@@ -63,6 +77,7 @@ private:
   Led *led;
   byte pinIndicator;
   TimerMs ledBlinkTimer;
+  TimerMs ledImpulseTimer;
 };
 
 #endif
