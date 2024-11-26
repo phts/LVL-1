@@ -18,7 +18,7 @@ Led led(Config::PIN_LED);
 Indicator indicator(&led, Config::PIN_INDICATOR);
 Level level(&indicator, LEVEL_WARNING);
 
-TimerMs mainTimer(CHECK_INTERVAL);
+TimerMs checkTimer(CHECK_INITIAL_DELAY, 0, 1);
 
 void progressCallback(String resp)
 {
@@ -47,6 +47,8 @@ void check()
   int lvl = helpers.distanceToLevel(distance);
   level.setValue(lvl);
   wifi.sendLevel(lvl);
+  checkTimer.setTime(CHECK_INTERVAL);
+  checkTimer.start();
 }
 
 void btnCheckCallback()
@@ -55,7 +57,6 @@ void btnCheckCallback()
   {
   case EB_PRESS:
     check();
-    mainTimer.start();
   }
 }
 
@@ -64,7 +65,7 @@ void setup()
   Serial.begin(SERIAL_PORT);
   btnCheck.attach(btnCheckCallback);
   level.setup();
-  mainTimer.start();
+  checkTimer.start();
   wifi.setup();
 }
 
@@ -72,7 +73,7 @@ void loop()
 {
   btnCheck.tick();
   indicator.tick();
-  if (mainTimer.tick())
+  if (checkTimer.tick())
   {
     check();
   }
