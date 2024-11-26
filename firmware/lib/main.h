@@ -44,7 +44,9 @@ void check()
     return;
   }
   console.log(F("Distance: "), distance);
-  level.setValue(helpers.distanceToLevel(distance));
+  int lvl = helpers.distanceToLevel(distance);
+  level.setValue(lvl);
+  wifi.sendLevel(lvl);
 }
 
 void btnCheckCallback()
