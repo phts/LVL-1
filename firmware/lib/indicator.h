@@ -40,11 +40,17 @@ public:
     }
   }
 
-  void setLevel(int value)
+  void setLevel(int _level)
   {
-    int pwm = constrain(map(value, 0, 100, 0, 255), 0, 255);
+    level = _level;
+    int pwm = constrain(map(level, 0, 100, 0, 255), 0, 255);
     analogWrite(pinIndicator, pwm);
     console.log(F("PWM: "), pwm);
+  }
+
+  int getLevel()
+  {
+    return level;
   }
 
   void setLed(byte type)
@@ -78,6 +84,7 @@ private:
   byte pinIndicator;
   TimerMs ledBlinkTimer;
   TimerMs ledImpulseTimer;
+  int level;
 };
 
 #endif

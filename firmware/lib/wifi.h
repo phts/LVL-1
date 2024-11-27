@@ -4,23 +4,24 @@
 #include <SoftwareSerial.h>
 #include "console.h"
 #include "settings.h"
-#include "indicator.h"
 #include "transport.h"
 
 class Wifi
 {
 public:
-  Wifi(Indicator *_indicator, byte pinRx, byte pinTx, void (*_progressCallback)(String)) : softSerial(pinRx, pinTx), transport(&softSerial)
+  Wifi(byte pinRx, byte pinTx) : softSerial(pinRx, pinTx), transport(&softSerial)
   {
-    indicator = _indicator;
-    progressCallback = _progressCallback;
   }
 
-  setup()
+  setup(void (*_connectCallback)(String))
   {
     softSerial.begin(SERIAL_PORT);
-    indicator->setLed(Indicator::LED_INFO);
-    transport.exec(F("!connect"), progressCallback);
+    connectCallback = _connectCallback;
+  }
+
+  connect()
+  {
+    transport.exec(F("!connect"), connectCallback);
   }
 
   tick()
@@ -37,8 +38,7 @@ public:
 private:
   SoftwareSerial softSerial;
   Transport transport;
-  Indicator *indicator;
-  void (*progressCallback)(String);
+  void (*connectCallback)(String);
 };
 
 #endif

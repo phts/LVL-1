@@ -57,12 +57,15 @@ public:
       delay(10);
     }
     response.trim();
-    console.log(F("Response:"), response);
+    console.log(F("Transport: > "), response);
     if (response == TRANSPORT_SUCCESS_RESPONSE)
     {
       abort();
     }
-    onResponse(response);
+    if (*onResponse)
+    {
+      onResponse(response);
+    }
   }
 
 private:

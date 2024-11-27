@@ -11,31 +11,39 @@
 #include "indicator.h"
 #include "led.h"
 #include "wifi.h"
+#include "startup.h"
 
 Button btnCheck(Config::PIN_BTN_CHECK);
 Ultrasonic ultrasonic(Config::PIN_ULTRASONIC_SENSOR_TRIGGER, Config::PIN_ULTRASONIC_SENSOR_ECHO);
 Led led(Config::PIN_LED);
 Indicator indicator(&led, Config::PIN_INDICATOR);
 Level level(&indicator, LEVEL_WARNING);
+Wifi wifi(Config::PIN_WIFI_RX, Config::PIN_WIFI_TX);
+Startup startup(&indicator, &wifi);
 
-TimerMs checkTimer(CHECK_INITIAL_DELAY, 0, 1);
+TimerMs checkTimer(CHECK_INITIAL_DELAY);
 
-void progressCallback(String resp)
+void connectCallback(String resp)
 {
   if (resp.startsWith(F("progress=")))
   {
-    indicator.setLevel(resp.substring(9).toInt());
+    startup.setMaxProgress(resp.substring(9).toInt());
   }
   if (resp == TRANSPORT_SUCCESS_RESPONSE)
   {
-    indicator.setLevel(100);
-    indicator.setLed(Indicator::LED_OFF);
+    startup.setMaxProgress(100);
   }
 }
-Wifi wifi(&indicator, Config::PIN_WIFI_RX, Config::PIN_WIFI_TX, progressCallback);
 
 void check()
 {
+  if (startup.isStarting())
+  {
+    console.log(F("Not started yet. Check skipped..."));
+    return;
+  }
+  checkTimer.setTime(CHECK_INTERVAL);
+  checkTimer.start();
   float distance = ultrasonic.getDistance();
   if (distance < 0)
   {
@@ -47,8 +55,6 @@ void check()
   int lvl = helpers.distanceToLevel(distance);
   level.setValue(lvl);
   wifi.sendLevel(lvl);
-  checkTimer.setTime(CHECK_INTERVAL);
-  checkTimer.start();
 }
 
 void btnCheckCallback()
@@ -66,7 +72,8 @@ void setup()
   btnCheck.attach(btnCheckCallback);
   level.setup();
   checkTimer.start();
-  wifi.setup();
+  wifi.setup(connectCallback);
+  startup.setup();
 }
 
 void loop()
@@ -78,6 +85,7 @@ void loop()
     check();
   }
   wifi.tick();
+  startup.tick();
 }
 
 #endif

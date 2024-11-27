@@ -5,6 +5,7 @@
 
 #define CHECK_INITIAL_DELAY (60 * 1000)     // 1 min
 #define CHECK_INTERVAL (4 * 60 * 60 * 1000) // 4h
+#define STARTUP_TIMER_INTERVAL 500
 
 #define LEVEL_WARNING 83 // 0--100
 
