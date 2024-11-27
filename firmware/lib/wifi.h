@@ -31,14 +31,13 @@ public:
 
   sendLevel(int value)
   {
-    transport.exec(String(F("!level=")) + String(value), [](String resp)
-                   { console.log(F("!connect>>> "), resp); });
+    transport.exec(String(F("!level=")) + String(value));
   }
 
 private:
   SoftwareSerial softSerial;
   Transport transport;
-  void (*connectCallback)(String);
+  void (*connectCallback)(String) = nullptr;
 };
 
 #endif

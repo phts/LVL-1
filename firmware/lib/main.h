@@ -39,7 +39,7 @@ void check()
 {
   if (startup.isStarting())
   {
-    console.log(F("Not started yet. Check skipped..."));
+    console.info(F("Not started yet. Check skipped..."));
     return;
   }
   checkTimer.setTime(CHECK_INTERVAL);
@@ -47,11 +47,10 @@ void check()
   float distance = ultrasonic.getDistance();
   if (distance < 0)
   {
-    console.log(F("Failed to read ultrasonic sensor"));
+    console.info(F("Failed to read ultrasonic sensor"));
     indicator.setLed(Indicator::LED_ERROR);
     return;
   }
-  console.log(F("Distance: "), distance);
   int lvl = helpers.distanceToLevel(distance);
   level.setValue(lvl);
   wifi.sendLevel(lvl);

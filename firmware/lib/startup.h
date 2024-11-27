@@ -17,8 +17,8 @@ public:
 
   void setup()
   {
-    console.log(F("PHTS LVL-1"));
-    console.log(F("Staring up..."));
+    console.info(F("PHTS LVL-1"));
+    console.info(F("Staring up..."));
     starting = true;
     indicator->setLed(Indicator::LED_INFO);
     startupTimer.start();

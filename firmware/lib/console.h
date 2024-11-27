@@ -4,28 +4,38 @@
 class Console
 {
 public:
-  void log(String str)
+  void info(String str)
   {
     Serial.println(str);
   }
-  void log(String str, String str2)
+  void info(String str, String str2)
   {
-    Serial.print(str);
+    Serial.print(str + F(" "));
     Serial.println(str2);
   }
-  void log(String str, int value)
+#if DEBUG
+  void debug(String str)
   {
-    Serial.print(str);
+    Serial.println(str);
+  }
+  void debug(String str, String str2)
+  {
+    Serial.print(str + F(" "));
+    Serial.println(str2);
+  }
+  void debug(String str, int value)
+  {
+    Serial.print(str + F(" "));
     Serial.println(value);
   }
-  void log(String str, float value)
+  void debug(String str, float value)
   {
-    Serial.print(str);
+    Serial.print(str + F(" "));
     Serial.println(value);
   }
-  void log(String str, float array[], int len)
+  void debug(String str, float array[], int len)
   {
-    Serial.print(str);
+    Serial.print(str + F(" "));
     for (byte i = 0; i < len; i++)
     {
       Serial.print(array[i]);
@@ -33,6 +43,23 @@ public:
     }
     Serial.println();
   }
+#else
+  void debug(String str)
+  {
+  }
+  void debug(String str, String str2)
+  {
+  }
+  void debug(String str, int value)
+  {
+  }
+  void debug(String str, float value)
+  {
+  }
+  void debug(String str, float array[], int len)
+  {
+  }
+#endif
 };
 
 Console console;

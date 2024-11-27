@@ -14,13 +14,17 @@ public:
     serial = _serial;
   }
 
+  void exec(String _command)
+  {
+    exec(_command, nullptr);
+  }
   void exec(String _command, void (*_onResponse)(String))
   {
-    console.log(F("Transport::exec"), _command);
+    console.debug(F("Transport:: exec:"), _command);
 
     if (executed)
     {
-      console.log(F("Previous command still running:"), command);
+      console.info(F("Previous command still running:"), command);
       return;
     }
     executed = true;
@@ -31,8 +35,8 @@ public:
 
   void abort()
   {
+    console.debug(F("Transport:: abort"));
     executed = false;
-    console.log(F("abort"));
   }
 
   void tick()
@@ -57,7 +61,7 @@ public:
       delay(10);
     }
     response.trim();
-    console.log(F("Transport: > "), response);
+    console.debug(F("Transport:: >"), response);
     if (response == TRANSPORT_SUCCESS_RESPONSE)
     {
       abort();

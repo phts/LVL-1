@@ -20,7 +20,7 @@ public:
 
   void setValue(int value)
   {
-    console.log(F("Level: "), value);
+    console.debug(F("Level:: Value:"), value);
     bool warning = value >= warningLevel;
     indicator->setLevel(value);
     indicator->setLed(warning ? Indicator::LED_WARNING : Indicator::LED_OFF);
