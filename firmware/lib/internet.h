@@ -1,15 +1,15 @@
-#ifndef wifi_h
-#define wifi_h
+#ifndef internet_h
+#define internet_h
 
 #include <SoftwareSerial.h>
 #include "console.h"
 #include "settings.h"
 #include "transport.h"
 
-class Wifi
+class Internet
 {
 public:
-  Wifi(byte pinRx, byte pinTx) : softSerial(pinRx, pinTx), transport(&softSerial)
+  Internet(byte pinRx, byte pinTx) : softSerial(pinRx, pinTx), transport(&softSerial)
   {
   }
 

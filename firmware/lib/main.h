@@ -10,7 +10,7 @@
 #include "console.h"
 #include "indicator.h"
 #include "led.h"
-#include "wifi.h"
+#include "internet.h"
 #include "startup.h"
 
 Button btnCheck(Config::PIN_BTN_CHECK);
@@ -18,8 +18,8 @@ Ultrasonic ultrasonic(Config::PIN_ULTRASONIC_SENSOR_TRIGGER, Config::PIN_ULTRASO
 Led led(Config::PIN_LED);
 Indicator indicator(&led, Config::PIN_INDICATOR);
 Level level(&indicator, LEVEL_WARNING);
-Wifi wifi(Config::PIN_WIFI_RX, Config::PIN_WIFI_TX);
-Startup startup(&indicator, &wifi);
+Internet internet(Config::PIN_MODEM_RX, Config::PIN_MODEM_TX);
+Startup startup(&indicator, &internet);
 
 TimerMs checkTimer(CHECK_INITIAL_DELAY);
 
@@ -53,7 +53,7 @@ void check()
   }
   int lvl = helpers.distanceToLevel(distance);
   level.setValue(lvl);
-  wifi.sendLevel(lvl);
+  internet.sendLevel(lvl);
 }
 
 void btnCheckCallback()
@@ -72,7 +72,7 @@ void setup()
   level.setup();
   checkTimer.attach(check);
   checkTimer.start();
-  wifi.setup(connectCallback);
+  internet.setup(connectCallback);
   startup.setup();
 }
 
@@ -81,7 +81,7 @@ void loop()
   btnCheck.tick();
   indicator.tick();
   checkTimer.tick();
-  wifi.tick();
+  internet.tick();
   startup.tick();
 }
 

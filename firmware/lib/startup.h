@@ -4,15 +4,15 @@
 #include "settings.h"
 #include "console.h"
 #include "indicator.h"
-#include "wifi.h"
+#include "internet.h"
 
 class Startup
 {
 public:
-  Startup(Indicator *_indicator, Wifi *_wifi) : startupTimer(STARTUP_TIMER_INTERVAL, 0, 0)
+  Startup(Indicator *_indicator, Internet *_internet) : startupTimer(STARTUP_TIMER_INTERVAL, 0, 0)
   {
     indicator = _indicator;
-    wifi = _wifi;
+    internet = _internet;
   }
 
   void setup()
@@ -22,7 +22,7 @@ public:
     starting = true;
     indicator->setLed(Indicator::LED_INFO);
     startupTimer.start();
-    wifi->connect();
+    internet->connect();
   }
 
   void tick()
@@ -53,7 +53,7 @@ public:
 
 private:
   Indicator *indicator;
-  Wifi *wifi;
+  Internet *internet;
   TimerMs startupTimer;
   bool starting;
   int maxProgress = 90;
