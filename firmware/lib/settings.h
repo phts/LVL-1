@@ -21,4 +21,7 @@
 #define ULTRASONIC_MAX_TRIES 30
 #define ULTRASONIC_TRIM_SAMPLES 3
 
+#if __has_include("settings.local.h")
+#include "settings.local.h"
+#endif
 #endif
