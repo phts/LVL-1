@@ -71,6 +71,7 @@ void setup()
   Serial.begin(SERIAL_PORT);
   btnCheck.attach(btnCheckCallback);
   level.setup();
+  checkTimer.attach(check);
   checkTimer.start();
   wifi.setup(connectCallback);
   startup.setup();
@@ -80,10 +81,7 @@ void loop()
 {
   btnCheck.tick();
   indicator.tick();
-  if (checkTimer.tick())
-  {
-    check();
-  }
+  checkTimer.tick();
   wifi.tick();
   startup.tick();
 }
