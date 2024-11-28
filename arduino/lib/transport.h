@@ -21,13 +21,13 @@ public:
   void exec(String _command, void (*_onResponse)(String))
   {
     console.debug(F("Transport:: exec:"), _command);
-
-    if (executed)
+    if (state != STATE_READY)
     {
       console.info(F("Previous command still running:"), command);
       return;
     }
-    executed = true;
+    state = STATE_WAITING;
+    response = "";
     command = _command;
     onResponse = _onResponse;
     serial->println(command);
@@ -36,47 +36,70 @@ public:
   void abort()
   {
     console.debug(F("Transport:: abort"));
-    executed = false;
+    state = STATE_READY;
   }
 
   void tick()
   {
-    if (!executed)
+    tickState();
+  }
+
+private:
+  static const byte STATE_READY = 0;
+  static const byte STATE_WAITING = 1;
+  static const byte STATE_READING = 2;
+  static const byte STATE_HANDLING = 3;
+
+  byte state = STATE_READY;
+  String command;
+  String response;
+  void (*onResponse)(String);
+  SoftwareSerial *serial;
+
+  void tickState()
+  {
+    if (state == STATE_READY)
     {
       return;
     }
-    if (!serial->available())
+    else if (state == STATE_WAITING)
     {
-      return;
+      if (serial->available())
+      {
+        state = STATE_READING;
+      }
     }
-    String response = "";
-    while (serial->available())
+    else if (state == STATE_READING)
     {
+      if (!serial->available())
+      {
+        state = STATE_WAITING;
+        return;
+      }
       char c = serial->read();
       response.concat(c);
       if (c == '\n')
       {
-        break;
+        response.trim();
+        state = STATE_HANDLING;
+        return;
       }
-      delay(10);
     }
-    response.trim();
-    console.debug(F("Transport:: >"), response);
-    if (response == TRANSPORT_SUCCESS_RESPONSE)
+    else if (state == STATE_HANDLING)
     {
-      abort();
-    }
-    if (*onResponse)
-    {
-      onResponse(response);
+      state = STATE_WAITING;
+      console.debug(F("Transport:: >"), response);
+      if (response == TRANSPORT_SUCCESS_RESPONSE)
+      {
+        abort();
+      }
+      if (*onResponse)
+      {
+        onResponse(response);
+      }
+      response = "";
     }
   }
-
-private:
-  bool executed = false;
-  String command;
-  void (*onResponse)(String);
-  SoftwareSerial *serial;
 };
 
 #endif
