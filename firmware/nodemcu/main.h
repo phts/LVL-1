@@ -18,15 +18,15 @@ int sendProgress(int value)
 
 void sendOk()
 {
-  Serial.println(F("ok"));
+  Serial.println(F("ok!"));
 }
 
 void sendFail()
 {
-  Serial.println(F("fail"));
+  Serial.println(F("fail!"));
 }
 
-void start()
+void connect()
 {
   progress = sendProgress(0);
   debug(F("Connecting to"), WIFI_NAME);
@@ -74,26 +74,31 @@ void setup()
 
 void loop()
 {
-  Serial.println(F("Command>"));
-  while (!Serial.available())
+  if (!Serial.available())
   {
+    return;
   }
 
   String cmd = Serial.readString();
   cmd.trim();
-  if (cmd == F("!start"))
+  debug(cmd);
+  if (cmd == F("!connect"))
   {
-    start();
+    connect();
   }
-  else if (cmd == F("!level"))
+  else if (cmd == F("!disconnect"))
   {
-    Serial.println(F("Level>"));
-    while (!Serial.available())
-    {
-    }
-    String value = Serial.readString();
-    value.trim();
+    WiFi.disconnect();
+    sendOk();
+  }
+  else if (cmd.startsWith(F("!level=")))
+  {
+    String value = cmd.substring(7);
     level(value);
+  }
+  else if (cmd == F("!healthcheck"))
+  {
+    sendOk();
   }
   else
   {

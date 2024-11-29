@@ -8,6 +8,11 @@ public:
   {
     Serial.println(str);
   }
+  void log(String str, String str2)
+  {
+    Serial.print(str);
+    Serial.println(str2);
+  }
   void log(String str, int value)
   {
     Serial.print(str);

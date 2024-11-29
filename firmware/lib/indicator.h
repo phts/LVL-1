@@ -33,7 +33,7 @@ public:
     }
   }
 
-  void setLevel(byte value)
+  void setLevel(int value)
   {
     int pwm = constrain(map(value, 0, 100, 0, 255), 0, 255);
     analogWrite(pinIndicator, pwm);
