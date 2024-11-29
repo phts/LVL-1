@@ -56,7 +56,7 @@ void level(String value)
   int httpResponseCode = http.POST(F(""));
   debug(F("Response code"), httpResponseCode);
 
-  if (httpResponseCode <= 0)
+  if (httpResponseCode < 200 || httpResponseCode > 299)
   {
     sendFail();
   }
