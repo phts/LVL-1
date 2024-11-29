@@ -100,6 +100,11 @@ void loop()
   {
     sendOk();
   }
+  else if (cmd.startsWith(F("!fail=")))
+  {
+    String value = cmd.substring(6);
+    sendFail(value);
+  }
   else
   {
     debug(F("Unknown"));
