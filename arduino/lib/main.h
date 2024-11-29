@@ -44,6 +44,7 @@ void reportError(String log)
 void internetErrorCallback(byte type, String desc)
 {
   reportError(desc);
+  internet.connect(nullptr);
 }
 
 void check()
