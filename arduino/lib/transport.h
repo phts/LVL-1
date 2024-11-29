@@ -5,6 +5,7 @@
 #define TRANSPORT_FAILURE_RESPONSE F("fail!")
 
 #include <SoftwareSerial.h>
+#include <TimerMs.h>
 #include "console.h"
 #include "settings.h"
 
@@ -12,8 +13,11 @@ class Transport
 {
 public:
   static const byte FAILURE_TYPE_RESPONSE = 1;
+  static const byte FAILURE_TYPE_EXEC_TIMEOUT = 2;
+  static const byte FAILURE_TYPE_RESP_TIMEOUT = 3;
 
-  Transport(SoftwareSerial *_serial)
+  Transport(SoftwareSerial *_serial) : executionTimeoutTimer(TRANSPORT_TIMEOUT_EXECUTION, 0, 1),
+                                       responseTimeoutTimer(TRANSPORT_TIMEOUT_RESPONSE, 0, 1)
   {
     serial = _serial;
   }
@@ -26,7 +30,7 @@ public:
   {
     exec(_command, _onResponse, nullptr);
   }
-  bool exec(String _command, void (*_onResponse)(String), void (*_onFail)(byte, String))
+  void exec(String _command, void (*_onResponse)(String), void (*_onFail)(byte, String))
   {
     console.debug(F("Transport:: exec:"), _command);
     if (state != STATE_READY)
@@ -41,12 +45,13 @@ public:
     onFail = _onFail;
     serial->flush();
     serial->println(command);
+    executionTimeoutTimer.start();
+    responseTimeoutTimer.start();
   }
 
-  void abort()
+  boolean isBusy()
   {
-    console.debug(F("Transport:: abort"));
-    state = STATE_READY;
+    return state;
   }
 
   void tick()
@@ -66,9 +71,21 @@ private:
   void (*onResponse)(String);
   void (*onFail)(byte type, String desc);
   SoftwareSerial *serial;
+  TimerMs executionTimeoutTimer;
+  TimerMs responseTimeoutTimer;
 
   void tickState()
   {
+    if (executionTimeoutTimer.tick())
+    {
+      fail(FAILURE_TYPE_EXEC_TIMEOUT, String(F("Timed out during execution: ")) + command);
+      return;
+    }
+    if (responseTimeoutTimer.tick())
+    {
+      fail(FAILURE_TYPE_RESP_TIMEOUT, String(F("Timed out response from command: ")) + command);
+      return;
+    }
     if (state == STATE_READY)
     {
 #if DEBUG_RXTX
@@ -99,30 +116,47 @@ private:
       {
         response.trim();
         state = STATE_HANDLING;
+        responseTimeoutTimer.stop();
         return;
       }
     }
     else if (state == STATE_HANDLING)
     {
       state = STATE_WAITING;
+      responseTimeoutTimer.restart();
       console.debug(F("Transport:: >"), response);
       if (response == TRANSPORT_SUCCESS_RESPONSE)
       {
-        abort();
+        finish();
       }
       else if (response.startsWith(TRANSPORT_FAILURE_RESPONSE))
       {
-        abort();
-        if (*onFail)
-        {
-          onFail(FAILURE_TYPE_RESPONSE, response.substring(String(TRANSPORT_FAILURE_RESPONSE).length() + 1));
-        }
+        fail(FAILURE_TYPE_RESPONSE, response.substring(String(TRANSPORT_FAILURE_RESPONSE).length() + 1));
       }
       if (*onResponse)
       {
         onResponse(response);
       }
       response = "";
+    }
+  }
+
+  void finish()
+  {
+    console.debug(F("Transport:: finish"));
+    state = STATE_READY;
+    executionTimeoutTimer.stop();
+    responseTimeoutTimer.stop();
+  }
+
+  void fail(byte type, String desc)
+  {
+    finish();
+    console.debug(F("Transport:: fail"), String(type) + desc);
+    state = STATE_READY;
+    if (*onFail)
+    {
+      onFail(type, desc);
     }
   }
 };
