@@ -31,6 +31,7 @@ public:
     response = "";
     command = _command;
     onResponse = _onResponse;
+    serial->flush();
     serial->println(command);
   }
 
