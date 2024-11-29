@@ -13,15 +13,14 @@ public:
   {
   }
 
-  setup(void (*_connectCallback)(String))
+  setup()
   {
     softSerial.begin(SERIAL_PORT);
-    connectCallback = _connectCallback;
   }
 
-  connect()
+  connect(void (*onResponse)(String))
   {
-    transport.exec(F("!connect"), connectCallback);
+    transport.exec(F("!connect"), onResponse);
   }
 
   tick()
@@ -37,7 +36,6 @@ public:
 private:
   SoftwareSerial softSerial;
   Transport transport;
-  void (*connectCallback)(String) = nullptr;
 };
 
 #endif

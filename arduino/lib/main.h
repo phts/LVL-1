@@ -72,8 +72,8 @@ void setup()
   level.setup();
   checkTimer.attach(check);
   checkTimer.start();
-  internet.setup(connectCallback);
-  startup.setup();
+  internet.setup();
+  startup.setup(connectCallback);
 }
 
 void loop()

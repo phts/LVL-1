@@ -15,14 +15,14 @@ public:
     internet = _internet;
   }
 
-  void setup()
+  void setup(void (*connectCallback)(String))
   {
     console.info(F("PHTS LVL-1"));
     console.info(F("Staring up..."));
     starting = true;
     indicator->setLed(Indicator::LED_INFO);
     startupTimer.start();
-    internet->connect();
+    internet->connect(connectCallback);
   }
 
   void tick()
