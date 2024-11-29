@@ -5,6 +5,7 @@
 
 #include <SoftwareSerial.h>
 #include "console.h"
+#include "settings.h"
 
 class Transport
 {
@@ -60,6 +61,12 @@ private:
   {
     if (state == STATE_READY)
     {
+#if DEBUG_RXTX
+      if (serial->available())
+        Serial.write(serial->read());
+      if (Serial.available())
+        serial->write(Serial.read());
+#endif
       return;
     }
     else if (state == STATE_WAITING)

@@ -2,5 +2,6 @@
 #define settings_local_h
 
 #define DEBUG true
+#define DEBUG_RXTX true
 
 #endif

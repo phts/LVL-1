@@ -2,6 +2,7 @@
 #define settings_h
 
 #define DEBUG false
+#define DEBUG_RXTX false
 #define SERIAL_PORT 9600
 
 #define CHECK_INITIAL_DELAY 60000 // 1 min
