@@ -21,9 +21,9 @@ void sendOk()
   Serial.println(F("ok!"));
 }
 
-void sendFail()
+void sendFail(String desc)
 {
-  Serial.println(F("fail!"));
+  Serial.println(String(F("fail!=")) + desc);
 }
 
 void connect()
@@ -47,7 +47,7 @@ void level(String value)
 {
   if (WiFi.status() != WL_CONNECTED)
   {
-    sendFail();
+    sendFail(F("Not connected"));
     return;
   }
 
@@ -58,7 +58,7 @@ void level(String value)
 
   if (httpResponseCode < 200 || httpResponseCode > 299)
   {
-    sendFail();
+    sendFail(String(F("Response code: ")) + String(httpResponseCode));
   }
   else
   {
