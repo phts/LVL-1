@@ -25,9 +25,9 @@ TimerMs checkTimer(CHECK_INITIAL_DELAY);
 
 void connectCallback(String resp)
 {
-  if (resp.startsWith(F("progress=")))
+  if (resp.startsWith(F("progress!=")))
   {
-    startup.setMaxProgress(resp.substring(9).toInt());
+    startup.setMaxProgress(resp.substring(10).toInt());
   }
   if (resp == TRANSPORT_SUCCESS_RESPONSE)
   {

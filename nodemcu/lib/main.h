@@ -12,7 +12,7 @@ int progress = 0;
 
 int sendProgress(int value)
 {
-  Serial.println(F("progress=") + String(value));
+  Serial.println(F("progress!=") + String(value));
   return value;
 }
 
