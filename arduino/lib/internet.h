@@ -13,13 +13,13 @@ public:
   {
   }
 
-  setup(void (*_failCallback)(byte, String))
+  setup(OnFailureCallback _failCallback)
   {
     softSerial.begin(SERIAL_PORT);
     failCallback = _failCallback;
   }
 
-  connect(void (*onResponse)(String))
+  connect(OnResponseCallback onResponse)
   {
     transport.exec(F("!connect"), onResponse, failCallback);
   }
@@ -37,7 +37,7 @@ public:
 private:
   SoftwareSerial softSerial;
   Transport transport;
-  void (*failCallback)(byte, String) = nullptr;
+  OnFailureCallback failCallback = nullptr;
 };
 
 #endif

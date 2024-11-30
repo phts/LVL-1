@@ -9,6 +9,9 @@
 #include "console.h"
 #include "settings.h"
 
+typedef void (*OnResponseCallback)(String response);
+typedef void (*OnFailureCallback)(byte type, String desc);
+
 class Transport
 {
 public:
@@ -26,11 +29,11 @@ public:
   {
     exec(_command, nullptr, nullptr);
   }
-  void exec(String _command, void (*_onResponse)(String))
+  void exec(String _command, OnResponseCallback _onResponse)
   {
     exec(_command, _onResponse, nullptr);
   }
-  void exec(String _command, void (*_onResponse)(String), void (*_onFail)(byte, String))
+  void exec(String _command, OnResponseCallback _onResponse, OnFailureCallback _onFail)
   {
     console.debug(F("Transport:: exec:"), _command);
     if (state != STATE_READY)
@@ -68,8 +71,8 @@ private:
   byte state = STATE_READY;
   String command;
   String response;
-  void (*onResponse)(String);
-  void (*onFail)(byte type, String desc);
+  OnResponseCallback onResponse;
+  OnFailureCallback onFail;
   SoftwareSerial *serial;
   TimerMs executionTimeoutTimer;
   TimerMs responseTimeoutTimer;

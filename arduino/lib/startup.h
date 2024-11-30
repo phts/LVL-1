@@ -15,7 +15,7 @@ public:
     internet = _internet;
   }
 
-  void setup(void (*connectCallback)(String))
+  void setup(OnResponseCallback connectCallback)
   {
     console.info(F("PHTS LVL-1"));
     console.info(F("Staring up..."));
