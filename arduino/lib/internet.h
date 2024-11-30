@@ -13,14 +13,15 @@ public:
   {
   }
 
-  setup()
+  setup(void (*_failCallback)(byte, String))
   {
     softSerial.begin(SERIAL_PORT);
+    failCallback = _failCallback;
   }
 
   connect(void (*onResponse)(String))
   {
-    transport.exec(F("!connect"), onResponse);
+    transport.exec(F("!connect"), onResponse, failCallback);
   }
 
   tick()
@@ -30,12 +31,13 @@ public:
 
   sendLevel(int value)
   {
-    transport.exec(String(F("!level=")) + String(value));
+    transport.exec(String(F("!level=")) + String(value), nullptr, failCallback);
   }
 
 private:
   SoftwareSerial softSerial;
   Transport transport;
+  void (*failCallback)(byte, String) = nullptr;
 };
 
 #endif

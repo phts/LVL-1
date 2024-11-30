@@ -2,6 +2,7 @@
 #define transport_h
 
 #define TRANSPORT_SUCCESS_RESPONSE F("ok!")
+#define TRANSPORT_FAILURE_RESPONSE F("fail!")
 
 #include <SoftwareSerial.h>
 #include "console.h"
@@ -10,6 +11,8 @@
 class Transport
 {
 public:
+  static const byte FAILURE_TYPE_RESPONSE = 1;
+
   Transport(SoftwareSerial *_serial)
   {
     serial = _serial;
@@ -17,9 +20,13 @@ public:
 
   void exec(String _command)
   {
-    exec(_command, nullptr);
+    exec(_command, nullptr, nullptr);
   }
   void exec(String _command, void (*_onResponse)(String))
+  {
+    exec(_command, _onResponse, nullptr);
+  }
+  bool exec(String _command, void (*_onResponse)(String), void (*_onFail)(byte, String))
   {
     console.debug(F("Transport:: exec:"), _command);
     if (state != STATE_READY)
@@ -31,6 +38,7 @@ public:
     response = "";
     command = _command;
     onResponse = _onResponse;
+    onFail = _onFail;
     serial->flush();
     serial->println(command);
   }
@@ -56,6 +64,7 @@ private:
   String command;
   String response;
   void (*onResponse)(String);
+  void (*onFail)(byte type, String desc);
   SoftwareSerial *serial;
 
   void tickState()
@@ -100,6 +109,14 @@ private:
       if (response == TRANSPORT_SUCCESS_RESPONSE)
       {
         abort();
+      }
+      else if (response.startsWith(TRANSPORT_FAILURE_RESPONSE))
+      {
+        abort();
+        if (*onFail)
+        {
+          onFail(FAILURE_TYPE_RESPONSE, response.substring(String(TRANSPORT_FAILURE_RESPONSE).length() + 1));
+        }
       }
       if (*onResponse)
       {

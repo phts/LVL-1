@@ -35,6 +35,17 @@ void connectCallback(String resp)
   }
 }
 
+void reportError(String log)
+{
+  indicator.setLed(Indicator::LED_ERROR);
+  console.info(log);
+}
+
+void internetErrorCallback(byte type, String desc)
+{
+  reportError(desc);
+}
+
 void check()
 {
   if (startup.isStarting())
@@ -47,8 +58,7 @@ void check()
   float distance = ultrasonic.getDistance();
   if (distance < 0)
   {
-    console.info(F("Failed to read ultrasonic sensor"));
-    indicator.setLed(Indicator::LED_ERROR);
+    reportError(F("Failed to read ultrasonic sensor"));
     return;
   }
   int lvl = helpers.distanceToLevel(distance);
@@ -72,7 +82,7 @@ void setup()
   level.setup();
   checkTimer.attach(check);
   checkTimer.start();
-  internet.setup();
+  internet.setup(internetErrorCallback);
   startup.setup(connectCallback);
 }
 
