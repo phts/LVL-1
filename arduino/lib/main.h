@@ -25,11 +25,11 @@ TimerMs checkTimer(CHECK_INITIAL_DELAY);
 
 void connectCallback(String resp)
 {
-  if (resp.startsWith(F("progress!=")))
+  if (Transport::equals(resp, F("progress!")))
   {
-    startup.setMaxProgress(resp.substring(10).toInt());
+    startup.setMaxProgress(Transport::value(resp).toInt());
   }
-  if (resp == TRANSPORT_SUCCESS_RESPONSE)
+  if (Transport::isSuccess(resp))
   {
     startup.setMaxProgress(100);
   }
@@ -44,7 +44,7 @@ void reportError(String log)
 void internetErrorCallback(String command, byte type, String desc)
 {
   reportError(command + String(F(": ")) + desc);
-  if (command.startsWith(F("!level=")))
+  if (Transport::equals(command, F("!level")))
   {
     internet.disconnect([](String _)
                         { internet.connect(nullptr); });

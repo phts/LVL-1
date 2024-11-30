@@ -1,9 +1,6 @@
 #ifndef transport_h
 #define transport_h
 
-#define TRANSPORT_SUCCESS_RESPONSE F("ok!")
-#define TRANSPORT_FAILURE_RESPONSE F("fail!")
-
 #include <SoftwareSerial.h>
 #include <TimerMs.h>
 #include "console.h"
@@ -18,6 +15,30 @@ public:
   static const byte FAILURE_TYPE_RESPONSE = 1;
   static const byte FAILURE_TYPE_EXEC_TIMEOUT = 2;
   static const byte FAILURE_TYPE_RESP_TIMEOUT = 3;
+  static inline const char *SUCCESS_RESPONSE = "ok!";
+  static inline const char *FAILURE_RESPONSE = "fail!";
+
+  static bool isSuccess(String resp)
+  {
+    return resp == SUCCESS_RESPONSE;
+  }
+  static bool isFailure(String resp)
+  {
+    return resp.startsWith(FAILURE_RESPONSE);
+  }
+  static bool equals(String resp, String resp2)
+  {
+    return resp.startsWith(resp2);
+  }
+  static String value(String resp)
+  {
+    int pos = resp.indexOf('=');
+    if (pos < 0)
+    {
+      return F("");
+    }
+    return resp.substring(pos + 1);
+  }
 
   Transport(SoftwareSerial *serial) : _executionTimeoutTimer(TRANSPORT_TIMEOUT_EXECUTION, 0, 1),
                                       _responseTimeoutTimer(TRANSPORT_TIMEOUT_RESPONSE, 0, 1)
@@ -133,13 +154,13 @@ private:
       _state = STATE_WAITING;
       _responseTimeoutTimer.restart();
       console.debug(F("Transport:: >"), _response);
-      if (_response == TRANSPORT_SUCCESS_RESPONSE)
+      if (Transport::isSuccess(_response))
       {
         finish();
       }
-      else if (_response.startsWith(TRANSPORT_FAILURE_RESPONSE))
+      else if (Transport::isFailure(_response))
       {
-        fail(_command, FAILURE_TYPE_RESPONSE, _response.substring(String(TRANSPORT_FAILURE_RESPONSE).length() + 1));
+        fail(_command, FAILURE_TYPE_RESPONSE, Transport::value(_response));
       }
       if (*_onResponse)
       {
