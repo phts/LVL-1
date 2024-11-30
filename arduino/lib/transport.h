@@ -10,7 +10,7 @@
 #include "settings.h"
 
 typedef void (*OnResponseCallback)(String response);
-typedef void (*OnFailureCallback)(byte type, String desc);
+typedef void (*OnFailureCallback)(String command, byte type, String desc);
 
 class Transport
 {
@@ -86,12 +86,12 @@ private:
   {
     if (executionTimeoutTimer.tick())
     {
-      fail(FAILURE_TYPE_EXEC_TIMEOUT, String(F("Timed out during execution: ")) + command);
+      fail(command, FAILURE_TYPE_EXEC_TIMEOUT, F("Timed out execution"));
       return;
     }
     if (responseTimeoutTimer.tick())
     {
-      fail(FAILURE_TYPE_RESP_TIMEOUT, String(F("Timed out response from command: ")) + command);
+      fail(command, FAILURE_TYPE_RESP_TIMEOUT, F("Timed out response"));
       return;
     }
     if (state == STATE_READY)
@@ -139,7 +139,7 @@ private:
       }
       else if (response.startsWith(TRANSPORT_FAILURE_RESPONSE))
       {
-        fail(FAILURE_TYPE_RESPONSE, response.substring(String(TRANSPORT_FAILURE_RESPONSE).length() + 1));
+        fail(command, FAILURE_TYPE_RESPONSE, response.substring(String(TRANSPORT_FAILURE_RESPONSE).length() + 1));
       }
       if (*onResponse)
       {
@@ -157,14 +157,14 @@ private:
     responseTimeoutTimer.stop();
   }
 
-  void fail(byte type, String desc)
+  void fail(String command, byte type, String desc)
   {
     finish();
     console.debug(F("Transport:: fail"), String(type) + desc);
     state = STATE_READY;
     if (*onFail)
     {
-      onFail(type, desc);
+      onFail(command, type, desc);
     }
   }
 };

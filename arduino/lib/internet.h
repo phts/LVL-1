@@ -24,6 +24,11 @@ public:
     transport.exec(F("!connect"), onResponse, failCallback);
   }
 
+  disconnect(OnResponseCallback onResponse)
+  {
+    transport.exec(F("!disconnect"), onResponse);
+  }
+
   tick()
   {
     transport.tick();

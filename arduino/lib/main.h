@@ -41,10 +41,14 @@ void reportError(String log)
   console.info(log);
 }
 
-void internetErrorCallback(byte type, String desc)
+void internetErrorCallback(String command, byte type, String desc)
 {
-  reportError(desc);
-  internet.connect(nullptr);
+  reportError(command + String(F(": ")) + desc);
+  if (command.startsWith(F("!level=")))
+  {
+    internet.disconnect([](String _)
+                        { internet.connect(nullptr); });
+  }
 }
 
 void check()
