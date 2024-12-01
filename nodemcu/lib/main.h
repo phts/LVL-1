@@ -3,6 +3,8 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
 #include <WiFiClient.h>
+#include <Command.h>
+#include <Response.h>
 #include "debug.h"
 #include "settings.h"
 
@@ -12,18 +14,18 @@ int progress = 0;
 
 int sendProgress(int value)
 {
-  Serial.println(F("progress!=") + String(value));
+  Serial.println(Response::withValue(F("progress!"), String(value)));
   return value;
 }
 
 void sendOk()
 {
-  Serial.println(F("ok!"));
+  Serial.println(Response::Success);
 }
 
 void sendFail(String desc)
 {
-  Serial.println(String(F("fail!=")) + desc);
+  Serial.println(Response::withValue(Response::Failure, desc));
 }
 
 void connect()
@@ -82,35 +84,33 @@ void loop()
   String cmd = Serial.readString();
   cmd.trim();
   debug(cmd);
-  if (cmd == F("!connect"))
+  if (Command::equals(cmd, F("!connect")))
   {
     connect();
   }
-  else if (cmd == F("!disconnect"))
+  else if (Command::equals(cmd, F("!disconnect")))
   {
     WiFi.disconnect();
     sendOk();
   }
-  else if (cmd.startsWith(F("!level=")))
+  else if (Command::equals(cmd, F("!level")))
   {
-    String value = cmd.substring(7);
-    level(value);
+    level(Command::valueOf(cmd));
   }
-  else if (cmd == F("!healthcheck"))
+  else if (Command::equals(cmd, F("!healthcheck")))
   {
     sendOk();
   }
-  else if (cmd.startsWith(F("!fail=")))
+  else if (Command::equals(cmd, F("!fail")))
   {
-    String value = cmd.substring(6);
-    sendFail(value);
+    sendFail(Command::valueOf(cmd));
   }
-  else if (cmd.startsWith(F("!ping=")))
+  else if (Command::equals(cmd, F("!ping")))
   {
-    int times = cmd.substring(6).toInt();
+    int times = Command::valueOf(cmd).toInt();
     for (int i = 0; i < times; i++)
     {
-      Serial.println(String(F("pong!=")) + String(i + 1));
+      Serial.println(Command::withValue(F("pong!"), String(i + 1)));
       delay(10000);
     }
     sendOk();

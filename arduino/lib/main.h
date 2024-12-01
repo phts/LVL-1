@@ -2,6 +2,7 @@
 #define main_h
 
 #include <EncButton.h>
+#include <Response.h>
 #include "config.h"
 #include "settings.h"
 #include "ultrasonic.h"
@@ -25,11 +26,11 @@ TimerMs checkTimer(CHECK_INITIAL_DELAY);
 
 void connectCallback(String resp)
 {
-  if (Transport::equals(resp, F("progress!")))
+  if (Response::equals(resp, F("progress!")))
   {
-    startup.setMaxProgress(Transport::value(resp).toInt());
+    startup.setMaxProgress(Response::valueOf(resp).toInt());
   }
-  if (Transport::isSuccess(resp))
+  if (Response::isSuccess(resp))
   {
     startup.setMaxProgress(100);
   }
@@ -44,7 +45,7 @@ void reportError(String log)
 void internetErrorCallback(String command, byte type, String desc)
 {
   reportError(command + String(F(": ")) + desc);
-  if (Transport::equals(command, F("!level")))
+  if (Command::equals(command, F("!level")))
   {
     internet.disconnect([](String _)
                         { internet.connect(nullptr); });

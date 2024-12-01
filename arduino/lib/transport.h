@@ -3,6 +3,8 @@
 
 #include <SoftwareSerial.h>
 #include <TimerMs.h>
+#include <Command.h>
+#include <Response.h>
 #include "console.h"
 #include "settings.h"
 
@@ -15,30 +17,6 @@ public:
   static const byte FAILURE_TYPE_RESPONSE = 1;
   static const byte FAILURE_TYPE_EXEC_TIMEOUT = 2;
   static const byte FAILURE_TYPE_RESP_TIMEOUT = 3;
-  static inline const char *SUCCESS_RESPONSE = "ok!";
-  static inline const char *FAILURE_RESPONSE = "fail!";
-
-  static bool isSuccess(String resp)
-  {
-    return resp == SUCCESS_RESPONSE;
-  }
-  static bool isFailure(String resp)
-  {
-    return resp.startsWith(FAILURE_RESPONSE);
-  }
-  static bool equals(String resp, String resp2)
-  {
-    return resp.startsWith(resp2);
-  }
-  static String value(String resp)
-  {
-    int pos = resp.indexOf('=');
-    if (pos < 0)
-    {
-      return F("");
-    }
-    return resp.substring(pos + 1);
-  }
 
   Transport(SoftwareSerial *serial) : _executionTimeoutTimer(TRANSPORT_TIMEOUT_EXECUTION, 0, 1),
                                       _responseTimeoutTimer(TRANSPORT_TIMEOUT_RESPONSE, 0, 1)
@@ -75,7 +53,7 @@ public:
 
   void execWithValue(String command, String value, OnResponseCallback onResponse, OnFailureCallback onFail)
   {
-    exec(command + String(F("=")) + value, onResponse, onFail);
+    exec(Command::withValue(command, value), onResponse, onFail);
   }
 
   boolean isBusy()
@@ -154,13 +132,13 @@ private:
       _state = STATE_WAITING;
       _responseTimeoutTimer.restart();
       console.debug(F("Transport:: >"), _response);
-      if (Transport::isSuccess(_response))
+      if (Response::isSuccess(_response))
       {
         finish();
       }
-      else if (Transport::isFailure(_response))
+      else if (Response::isFailure(_response))
       {
-        fail(_command, FAILURE_TYPE_RESPONSE, Transport::value(_response));
+        fail(_command, FAILURE_TYPE_RESPONSE, Response::valueOf(_response));
       }
       if (*_onResponse)
       {
