@@ -105,6 +105,16 @@ void loop()
     String value = cmd.substring(6);
     sendFail(value);
   }
+  else if (cmd.startsWith(F("!ping=")))
+  {
+    int times = cmd.substring(6).toInt();
+    for (int i = 0; i < times; i++)
+    {
+      Serial.println(String(F("pong!=")) + String(i + 1));
+      delay(10000);
+    }
+    sendOk();
+  }
   else
   {
     debug(F("Unknown"));
