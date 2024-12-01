@@ -9,54 +9,54 @@
 class Startup
 {
 public:
-  Startup(Indicator *_indicator, Internet *_internet) : startupTimer(STARTUP_TIMER_INTERVAL, 0, 0)
+  Startup(Indicator *indicator, Internet *internet) : _startupTimer(STARTUP_TIMER_INTERVAL, 0, 0)
   {
-    indicator = _indicator;
-    internet = _internet;
+    _indicator = indicator;
+    _internet = internet;
   }
 
   void setup(OnResponseCallback connectCallback)
   {
     console.info(F("PHTS LVL-1"));
     console.info(F("Staring up..."));
-    starting = true;
-    indicator->setLed(Indicator::LED_INFO);
-    startupTimer.start();
-    internet->connect(connectCallback);
+    _starting = true;
+    _indicator->setLed(Indicator::LED_INFO);
+    _startupTimer.start();
+    _internet->connect(connectCallback);
   }
 
   void tick()
   {
-    if (startupTimer.tick())
+    if (_startupTimer.tick())
     {
-      if (indicator->getLevel() < maxProgress)
+      if (_indicator->getLevel() < _maxProgress)
       {
-        indicator->setLevel(indicator->getLevel() + 1);
+        _indicator->setLevel(_indicator->getLevel() + 1);
       }
-      if (indicator->getLevel() == 100)
+      if (_indicator->getLevel() == 100)
       {
-        startupTimer.stop();
-        starting = false;
+        _startupTimer.stop();
+        _starting = false;
       }
     }
   }
 
   bool isStarting()
   {
-    return starting;
+    return _starting;
   }
 
   void setMaxProgress(int value)
   {
-    maxProgress = value;
+    _maxProgress = value;
   }
 
 private:
-  Indicator *indicator;
-  Internet *internet;
-  TimerMs startupTimer;
-  bool starting;
-  int maxProgress = 90;
+  Indicator *_indicator;
+  Internet *_internet;
+  TimerMs _startupTimer;
+  bool _starting;
+  int _maxProgress = 90;
 };
 
 #endif

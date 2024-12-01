@@ -9,7 +9,7 @@
 class Ultrasonic
 {
 public:
-  Ultrasonic(byte pinTrigger, byte pinEcho) : sensor(pinTrigger, pinEcho)
+  Ultrasonic(byte pinTrigger, byte pinEcho) : _sensor(pinTrigger, pinEcho)
   {
   }
 
@@ -20,7 +20,7 @@ public:
     for (int i = 0; i < ULTRASONIC_MAX_TRIES; i++)
     {
       delay(ULTRASONIC_SAMPLES_INTERVAL);
-      float distance = sensor.measureDistanceCm();
+      float distance = _sensor.measureDistanceCm();
       if (distance < 0)
       {
         continue;
@@ -50,7 +50,7 @@ public:
   }
 
 private:
-  UltraSonicDistanceSensor sensor;
+  UltraSonicDistanceSensor _sensor;
 };
 
 #endif

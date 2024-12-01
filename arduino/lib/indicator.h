@@ -14,66 +14,66 @@ public:
   static const byte LED_ERROR = 2;
   static const byte LED_INFO = 3;
 
-  Indicator(Led *_led, byte _pinIndicator)
+  Indicator(Led *led, byte pinIndicator)
   {
-    led = _led;
-    pinIndicator = _pinIndicator;
+    _led = led;
+    _pinIndicator = pinIndicator;
   }
 
   void setup()
   {
-    pinMode(pinIndicator, OUTPUT);
-    led->setup();
-    ledImpulseTimer.setTimerMode();
+    pinMode(_pinIndicator, OUTPUT);
+    _led->setup();
+    _ledImpulseTimer.setTimerMode();
   }
 
   void tick()
   {
-    if (ledBlinkTimer.tick())
+    if (_ledBlinkTimer.tick())
     {
-      ledImpulseTimer.start();
-      led->write(HIGH);
+      _ledImpulseTimer.start();
+      _led->write(HIGH);
     }
-    if (ledImpulseTimer.tick())
+    if (_ledImpulseTimer.tick())
     {
-      led->write(LOW);
+      _led->write(LOW);
     }
   }
 
-  void setLevel(int _level)
+  void setLevel(int level)
   {
-    level = _level;
-    int pwm = constrain(map(level, 0, 100, 0, 255), 0, 255);
-    analogWrite(pinIndicator, pwm);
+    _level = level;
+    int pwm = constrain(map(_level, 0, 100, 0, 255), 0, 255);
+    analogWrite(_pinIndicator, pwm);
     console.debug(F("Indicator:: PWM:"), pwm);
   }
 
   int getLevel()
   {
-    return level;
+    return _level;
   }
 
   void setLed(byte type)
   {
     console.debug(F("Indicator:: LED:"), type);
-    ledBlinkTimer.stop();
+    _ledBlinkTimer.stop();
     switch (type)
     {
     case LED_OFF:
-      led->write(LOW);
+      _led->write(LOW);
       break;
     case LED_WARNING:
-      led->write(HIGH);
+      _led->write(HIGH);
       break;
     case LED_ERROR:
-      ledImpulseTimer.setTime(INDICATOR_LED_ERROR_IMPULSE_INTERVAL);
-      ledBlinkTimer.setTime(INDICATOR_LED_ERROR_BLINK_INTERVAL);
-      ledBlinkTimer.start();
+      _ledImpulseTimer.setTime(INDICATOR_LED_ERROR_IMPULSE_INTERVAL);
+      _ledBlinkTimer.setTime(INDICATOR_LED_ERROR_BLINK_INTERVAL);
+      _ledBlinkTimer.start();
       break;
     case LED_INFO:
-      ledImpulseTimer.setTime(INDICATOR_LED_INFO_IMPULSE_INTERVAL);
-      ledBlinkTimer.setTime(INDICATOR_LED_INFO_BLINK_INTERVAL);
-      ledBlinkTimer.start();
+      _ledImpulseTimer.setTime(INDICATOR_LED_INFO_IMPULSE_INTERVAL);
+      _ledBlinkTimer.setTime(INDICATOR_LED_INFO_BLINK_INTERVAL);
+      _ledBlinkTimer.start();
       break;
     default:
       break;
@@ -81,11 +81,11 @@ public:
   }
 
 private:
-  Led *led;
-  byte pinIndicator;
-  TimerMs ledBlinkTimer;
-  TimerMs ledImpulseTimer;
-  int level;
+  Led *_led;
+  byte _pinIndicator;
+  TimerMs _ledBlinkTimer;
+  TimerMs _ledImpulseTimer;
+  int _level;
 };
 
 #endif

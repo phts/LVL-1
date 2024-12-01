@@ -19,47 +19,47 @@ public:
   static const byte FAILURE_TYPE_EXEC_TIMEOUT = 2;
   static const byte FAILURE_TYPE_RESP_TIMEOUT = 3;
 
-  Transport(SoftwareSerial *_serial) : executionTimeoutTimer(TRANSPORT_TIMEOUT_EXECUTION, 0, 1),
-                                       responseTimeoutTimer(TRANSPORT_TIMEOUT_RESPONSE, 0, 1)
+  Transport(SoftwareSerial *serial) : _executionTimeoutTimer(TRANSPORT_TIMEOUT_EXECUTION, 0, 1),
+                                      _responseTimeoutTimer(TRANSPORT_TIMEOUT_RESPONSE, 0, 1)
   {
-    serial = _serial;
+    _serial = serial;
   }
 
-  void exec(String _command)
+  void exec(String command)
   {
-    exec(_command, nullptr, nullptr);
+    exec(command, nullptr, nullptr);
   }
-  void exec(String _command, OnResponseCallback _onResponse)
+  void exec(String command, OnResponseCallback onResponse)
   {
-    exec(_command, _onResponse, nullptr);
+    exec(command, onResponse, nullptr);
   }
-  void exec(String _command, OnResponseCallback _onResponse, OnFailureCallback _onFail)
+  void exec(String command, OnResponseCallback onResponse, OnFailureCallback onFail)
   {
-    console.debug(F("Transport:: exec:"), _command);
-    if (state != STATE_READY)
+    console.debug(F("Transport:: exec:"), command);
+    if (_state != STATE_READY)
     {
       console.info(F("Previous command still running:"), command);
       return;
     }
-    state = STATE_WAITING;
-    response = "";
-    command = _command;
-    onResponse = _onResponse;
-    onFail = _onFail;
-    serial->flush();
-    serial->println(command);
-    executionTimeoutTimer.start();
-    responseTimeoutTimer.start();
+    _state = STATE_WAITING;
+    _response = "";
+    _command = command;
+    _onResponse = onResponse;
+    _onFail = onFail;
+    _serial->flush();
+    _serial->println(_command);
+    _executionTimeoutTimer.start();
+    _responseTimeoutTimer.start();
   }
 
-  void execWithValue(String _command, String _value, OnResponseCallback _onResponse, OnFailureCallback _onFail)
+  void execWithValue(String command, String value, OnResponseCallback onResponse, OnFailureCallback onFail)
   {
-    exec(_command + String(F("=")) + _value, _onResponse, _onFail);
+    exec(command + String(F("=")) + value, onResponse, onFail);
   }
 
   boolean isBusy()
   {
-    return state;
+    return _state;
   }
 
   void tick()
@@ -73,98 +73,98 @@ private:
   static const byte STATE_READING = 2;
   static const byte STATE_HANDLING = 3;
 
-  byte state = STATE_READY;
-  String command;
-  String response;
-  OnResponseCallback onResponse;
-  OnFailureCallback onFail;
-  SoftwareSerial *serial;
-  TimerMs executionTimeoutTimer;
-  TimerMs responseTimeoutTimer;
+  byte _state = STATE_READY;
+  String _command;
+  String _response;
+  OnResponseCallback _onResponse;
+  OnFailureCallback _onFail;
+  SoftwareSerial *_serial;
+  TimerMs _executionTimeoutTimer;
+  TimerMs _responseTimeoutTimer;
 
   void tickState()
   {
-    if (executionTimeoutTimer.tick())
+    if (_executionTimeoutTimer.tick())
     {
-      fail(command, FAILURE_TYPE_EXEC_TIMEOUT, F("Timed out execution"));
+      fail(_command, FAILURE_TYPE_EXEC_TIMEOUT, F("Timed out execution"));
       return;
     }
-    if (responseTimeoutTimer.tick())
+    if (_responseTimeoutTimer.tick())
     {
-      fail(command, FAILURE_TYPE_RESP_TIMEOUT, F("Timed out response"));
+      fail(_command, FAILURE_TYPE_RESP_TIMEOUT, F("Timed out response"));
       return;
     }
-    if (state == STATE_READY)
+    if (_state == STATE_READY)
     {
 #if DEBUG_RXTX
-      if (serial->available())
-        Serial.write(serial->read());
+      if (_serial->available())
+        Serial.write(_serial->read());
       if (Serial.available())
-        serial->write(Serial.read());
+        _serial->write(Serial.read());
 #endif
       return;
     }
-    else if (state == STATE_WAITING)
+    else if (_state == STATE_WAITING)
     {
-      if (serial->available())
+      if (_serial->available())
       {
-        state = STATE_READING;
+        _state = STATE_READING;
       }
     }
-    else if (state == STATE_READING)
+    else if (_state == STATE_READING)
     {
-      if (!serial->available())
+      if (!_serial->available())
       {
-        state = STATE_WAITING;
+        _state = STATE_WAITING;
         return;
       }
-      char c = serial->read();
-      response.concat(c);
+      char c = _serial->read();
+      _response.concat(c);
       if (c == '\n')
       {
-        response.trim();
-        state = STATE_HANDLING;
-        responseTimeoutTimer.stop();
+        _response.trim();
+        _state = STATE_HANDLING;
+        _responseTimeoutTimer.stop();
         return;
       }
     }
-    else if (state == STATE_HANDLING)
+    else if (_state == STATE_HANDLING)
     {
-      state = STATE_WAITING;
-      responseTimeoutTimer.restart();
-      console.debug(F("Transport:: >"), response);
-      if (response == TRANSPORT_SUCCESS_RESPONSE)
+      _state = STATE_WAITING;
+      _responseTimeoutTimer.restart();
+      console.debug(F("Transport:: >"), _response);
+      if (_response == TRANSPORT_SUCCESS_RESPONSE)
       {
         finish();
       }
-      else if (response.startsWith(TRANSPORT_FAILURE_RESPONSE))
+      else if (_response.startsWith(TRANSPORT_FAILURE_RESPONSE))
       {
-        fail(command, FAILURE_TYPE_RESPONSE, response.substring(String(TRANSPORT_FAILURE_RESPONSE).length() + 1));
+        fail(_command, FAILURE_TYPE_RESPONSE, _response.substring(String(TRANSPORT_FAILURE_RESPONSE).length() + 1));
       }
-      if (*onResponse)
+      if (*_onResponse)
       {
-        onResponse(response);
+        _onResponse(_response);
       }
-      response = "";
+      _response = "";
     }
   }
 
   void finish()
   {
     console.debug(F("Transport:: finish"));
-    state = STATE_READY;
-    executionTimeoutTimer.stop();
-    responseTimeoutTimer.stop();
+    _state = STATE_READY;
+    _executionTimeoutTimer.stop();
+    _responseTimeoutTimer.stop();
   }
 
   void fail(String command, byte type, String desc)
   {
     finish();
     console.debug(F("Transport:: fail"), String(type) + desc);
-    state = STATE_READY;
-    if (*onFail)
+    _state = STATE_READY;
+    if (*_onFail)
     {
-      onFail(command, type, desc);
+      _onFail(command, type, desc);
     }
   }
 };

@@ -9,40 +9,40 @@
 class Internet
 {
 public:
-  Internet(byte pinRx, byte pinTx) : softSerial(pinRx, pinTx), transport(&softSerial)
+  Internet(byte pinRx, byte pinTx) : _softSerial(pinRx, pinTx), _transport(&_softSerial)
   {
   }
 
-  setup(OnFailureCallback _failCallback)
+  setup(OnFailureCallback failCallback)
   {
-    softSerial.begin(SERIAL_PORT);
-    failCallback = _failCallback;
+    _softSerial.begin(SERIAL_PORT);
+    _failCallback = failCallback;
   }
 
   connect(OnResponseCallback onResponse)
   {
-    transport.exec(F("!connect"), onResponse, failCallback);
+    _transport.exec(F("!connect"), onResponse, _failCallback);
   }
 
   disconnect(OnResponseCallback onResponse)
   {
-    transport.exec(F("!disconnect"), onResponse);
+    _transport.exec(F("!disconnect"), onResponse);
   }
 
   tick()
   {
-    transport.tick();
+    _transport.tick();
   }
 
   sendLevel(int value)
   {
-    transport.execWithValue(F("!level"), String(value), nullptr, failCallback);
+    _transport.execWithValue(F("!level"), String(value), nullptr, _failCallback);
   }
 
 private:
-  SoftwareSerial softSerial;
-  Transport transport;
-  OnFailureCallback failCallback = nullptr;
+  SoftwareSerial _softSerial;
+  Transport _transport;
+  OnFailureCallback _failCallback = nullptr;
 };
 
 #endif

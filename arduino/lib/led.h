@@ -4,31 +4,31 @@
 class Led
 {
 public:
-  Led(byte _pin)
+  Led(byte pin)
   {
-    pin = _pin;
+    _pin = pin;
   }
 
   void setup()
   {
-    pinMode(pin, OUTPUT);
+    pinMode(_pin, OUTPUT);
     write(LOW);
   }
 
   void write(byte val)
   {
-    status = val;
-    digitalWrite(pin, val);
+    _status = val;
+    digitalWrite(_pin, val);
   }
 
   void toggle()
   {
-    write(status == LOW ? HIGH : LOW);
+    write(_status == LOW ? HIGH : LOW);
   }
 
 private:
-  byte pin;
-  byte status;
+  byte _pin;
+  byte _status;
 };
 
 #endif
