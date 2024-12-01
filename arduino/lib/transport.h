@@ -52,6 +52,11 @@ public:
     responseTimeoutTimer.start();
   }
 
+  void execWithValue(String _command, String _value, OnResponseCallback _onResponse, OnFailureCallback _onFail)
+  {
+    exec(_command + String(F("=")) + _value, _onResponse, _onFail);
+  }
+
   boolean isBusy()
   {
     return state;

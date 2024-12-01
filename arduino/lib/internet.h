@@ -31,7 +31,7 @@ public:
 
   sendLevel(int value)
   {
-    transport.exec(String(F("!level=")) + String(value), nullptr, failCallback);
+    transport.execWithValue(F("!level"), String(value), nullptr, failCallback);
   }
 
 private:
