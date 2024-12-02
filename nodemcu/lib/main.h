@@ -53,8 +53,10 @@ void level(String value)
     return;
   }
 
-  Serial.println(LEVEL_POST_ENDPOINT + value);
-  http.begin(client, LEVEL_POST_ENDPOINT + value);
+  String url = String(LEVEL_POST_ENDPOINT);
+  url.replace(F("{{value}}"), value);
+  debug(url);
+  http.begin(client, url);
   int httpResponseCode = http.POST(F(""));
   debug(F("Response code"), httpResponseCode);
 
