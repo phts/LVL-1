@@ -1,5 +1,12 @@
 # NodeMCU firmware
 
+## Prepare
+
+1. Add `http://arduino.esp8266.com/stable/package_esp8266com_index.json` into Preferences &rarr; `Additional Boards Manager URLs`
+2. Go to `Boards Manager`
+3. Install `esp8266`
+4. Select `Tools` &rarr; `Board` &rarr; `ESP8266 Boards` &rarr; `NODEMCU 1.0 (ESP - 12E Module)`
+
 ## Commands
 
 | Command          | `ok!`                | `fail!=<Description...>`                           | Description                                                                |

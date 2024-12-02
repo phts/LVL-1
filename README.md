@@ -2,8 +2,4 @@
 
 - [Schema](https://oshwlab.com/phts/lvl-1)
 
-## Libraries
-
-- [EncButton](https://github.com/GyverLibs/EncButton)
-- [HCSR04](https://github.com/Martinsos/arduino-lib-hc-sr04)
-- [TimerMs](https://github.com/GyverLibs/TimerMs)
+Consists of 2 modules: [Arduino Nano](./arduino) and [NodeMCU V3](./nodemcu).
