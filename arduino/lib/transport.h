@@ -2,6 +2,7 @@
 #define transport_h
 
 #include <SoftwareSerial.h>
+#include <ArduinoQueue.h>
 #include <TimerMs.h>
 #include <Command.h>
 #include <Response.h>
@@ -14,12 +15,19 @@ typedef void (*OnFailureCallback)(String command, byte type, String desc);
 class Transport
 {
 public:
+  struct CommandEntry
+  {
+    String command;
+    OnResponseCallback onResponse;
+    OnFailureCallback onFailure;
+  };
   static const byte FAILURE_TYPE_RESPONSE = 1;
   static const byte FAILURE_TYPE_EXEC_TIMEOUT = 2;
   static const byte FAILURE_TYPE_RESP_TIMEOUT = 3;
 
   Transport(SoftwareSerial *serial) : _executionTimeoutTimer(TRANSPORT_TIMEOUT_EXECUTION, 0, 1),
-                                      _responseTimeoutTimer(TRANSPORT_TIMEOUT_RESPONSE, 0, 1)
+                                      _responseTimeoutTimer(TRANSPORT_TIMEOUT_RESPONSE, 0, 1),
+                                      _queue(Transport::QUEUE_MAX_LEN)
   {
     _serial = serial;
   }
@@ -32,28 +40,21 @@ public:
   {
     exec(command, onResponse, nullptr);
   }
-  void exec(String command, OnResponseCallback onResponse, OnFailureCallback onFail)
+  void exec(String command, OnResponseCallback onResponse, OnFailureCallback onFailure)
   {
     console.debug(F("Transport:: exec:"), command);
-    if (_state != STATE_READY)
+    if (_queue.isFull())
     {
-      console.info(F("Previous command still running:"), command);
+      console.info(F("Command queue is full"));
       return;
     }
-    _state = STATE_WAITING;
-    _response = "";
-    _command = command;
-    _onResponse = onResponse;
-    _onFail = onFail;
-    _serial->flush();
-    _serial->println(_command);
-    _executionTimeoutTimer.start();
-    _responseTimeoutTimer.start();
+    _queue.enqueue({command, onResponse, onFailure});
+    execQueue();
   }
 
-  void execWithValue(String command, String value, OnResponseCallback onResponse, OnFailureCallback onFail)
+  void execWithValue(String command, String value, OnResponseCallback onResponse, OnFailureCallback onFailure)
   {
-    exec(Command::withValue(command, value), onResponse, onFail);
+    exec(Command::withValue(command, value), onResponse, onFailure);
   }
 
   boolean isBusy()
@@ -67,6 +68,7 @@ public:
   }
 
 private:
+  static const byte QUEUE_MAX_LEN = 3;
   static const byte STATE_READY = 0;
   static const byte STATE_WAITING = 1;
   static const byte STATE_READING = 2;
@@ -76,10 +78,36 @@ private:
   String _command;
   String _response;
   OnResponseCallback _onResponse;
-  OnFailureCallback _onFail;
+  OnFailureCallback _onFailure;
   SoftwareSerial *_serial;
   TimerMs _executionTimeoutTimer;
   TimerMs _responseTimeoutTimer;
+  ArduinoQueue<CommandEntry> _queue;
+
+  void execQueue()
+  {
+    if (_queue.isEmpty())
+    {
+      console.debug(F("Transport:: execQueue: empty"));
+      return;
+    }
+    if (isBusy())
+    {
+      console.debug(F("Transport:: execQueue: busy"));
+      return;
+    }
+    CommandEntry entry = _queue.dequeue();
+    _command = entry.command;
+    _onResponse = entry.onResponse;
+    _onFailure = entry.onFailure;
+    console.debug(F("Transport:: execQueue: taking next command: "), _command);
+    _state = STATE_WAITING;
+    _response = F("");
+    _serial->flush();
+    _serial->println(_command);
+    _executionTimeoutTimer.start();
+    _responseTimeoutTimer.start();
+  }
 
   void tickState()
   {
@@ -144,7 +172,7 @@ private:
       {
         _onResponse(_response);
       }
-      _response = "";
+      _response = F("");
     }
   }
 
@@ -154,17 +182,20 @@ private:
     _state = STATE_READY;
     _executionTimeoutTimer.stop();
     _responseTimeoutTimer.stop();
+    _command = F("");
+    _onResponse = nullptr;
+    _onFailure = nullptr;
+    execQueue();
   }
 
   void fail(String command, byte type, String desc)
   {
-    finish();
     console.debug(F("Transport:: fail"), String(type) + desc);
-    _state = STATE_READY;
-    if (*_onFail)
+    if (*_onFailure)
     {
-      _onFail(command, type, desc);
+      _onFailure(command, type, desc);
     }
+    finish();
   }
 };
 

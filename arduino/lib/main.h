@@ -42,16 +42,6 @@ void reportError(String log)
   console.info(log);
 }
 
-void internetErrorCallback(String command, byte type, String desc)
-{
-  reportError(command + String(F(": ")) + desc);
-  if (Command::equals(command, F("!level")))
-  {
-    internet.disconnect([](String _)
-                        { internet.connect(nullptr); });
-  }
-}
-
 void check()
 {
   if (startup.isStarting())
@@ -70,6 +60,17 @@ void check()
   int lvl = helpers.distanceToLevel(distance);
   level.setValue(lvl);
   internet.sendLevel(lvl);
+}
+
+void internetErrorCallback(String command, byte type, String desc)
+{
+  reportError(command + String(F(": ")) + desc);
+  if (Command::equals(command, F("!level")))
+  {
+    internet.disconnect(nullptr);
+    internet.connect(nullptr);
+    check();
+  }
 }
 
 void btnCheckCallback()
