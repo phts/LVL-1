@@ -75,13 +75,11 @@ private:
   static const byte STATE_HANDLING = 3;
 
   byte _state = STATE_READY;
-  String _command;
   String _response;
-  OnResponseCallback _onResponse;
-  OnFailureCallback _onFailure;
   SoftwareSerial *_serial;
   TimerMs _executionTimeoutTimer;
   TimerMs _responseTimeoutTimer;
+  CommandEntry _processingEntry;
   ArduinoQueue<CommandEntry> _queue;
 
   void execQueue()
@@ -96,15 +94,12 @@ private:
       console.debug(F("Transport:: execQueue: busy"));
       return;
     }
-    CommandEntry entry = _queue.dequeue();
-    _command = entry.command;
-    _onResponse = entry.onResponse;
-    _onFailure = entry.onFailure;
-    console.debug(F("Transport:: execQueue: taking next command: "), _command);
+    _processingEntry = _queue.dequeue();
+    console.debug(F("Transport:: execQueue: taking next command: "), _processingEntry.command);
     _state = STATE_WAITING;
     _response = F("");
     _serial->flush();
-    _serial->println(_command);
+    _serial->println(_processingEntry.command);
     _executionTimeoutTimer.start();
     _responseTimeoutTimer.start();
   }
@@ -113,12 +108,12 @@ private:
   {
     if (_executionTimeoutTimer.tick())
     {
-      fail(_command, FAILURE_TYPE_EXEC_TIMEOUT, F("Timed out execution"));
+      fail(FAILURE_TYPE_EXEC_TIMEOUT, F("Timed out execution"));
       return;
     }
     if (_responseTimeoutTimer.tick())
     {
-      fail(_command, FAILURE_TYPE_RESP_TIMEOUT, F("Timed out response"));
+      fail(FAILURE_TYPE_RESP_TIMEOUT, F("Timed out response"));
       return;
     }
     if (_state == STATE_READY)
@@ -166,11 +161,11 @@ private:
       }
       else if (Response::isFailure(_response))
       {
-        fail(_command, FAILURE_TYPE_RESPONSE, Response::valueOf(_response));
+        fail(FAILURE_TYPE_RESPONSE, Response::valueOf(_response));
       }
-      if (*_onResponse)
+      if (*_processingEntry.onResponse)
       {
-        _onResponse(_response);
+        _processingEntry.onResponse(_response);
       }
       _response = F("");
     }
@@ -182,18 +177,16 @@ private:
     _state = STATE_READY;
     _executionTimeoutTimer.stop();
     _responseTimeoutTimer.stop();
-    _command = F("");
-    _onResponse = nullptr;
-    _onFailure = nullptr;
+    _processingEntry = CommandEntry();
     execQueue();
   }
 
-  void fail(String command, byte type, String desc)
+  void fail(byte type, String desc)
   {
     console.debug(F("Transport:: fail"), String(type) + desc);
-    if (*_onFailure)
+    if (*_processingEntry.onFailure)
     {
-      _onFailure(command, type, desc);
+      _processingEntry.onFailure(_processingEntry.command, type, desc);
     }
     finish();
   }
