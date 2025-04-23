@@ -55,6 +55,7 @@ void check()
   if (distance < 0)
   {
     reportError(F("Failed to read ultrasonic sensor"));
+    internet.sendLog(F("error"), F("Failed to read ultrasonic sensor"));
     return;
   }
   int lvl = helpers.distanceToLevel(distance);

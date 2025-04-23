@@ -39,6 +39,11 @@ public:
     _transport.execWithValue(F("!level"), String(value), nullptr, _failCallback);
   }
 
+  sendLog(String severity, String message)
+  {
+    _transport.execWithValue(F("!log"), severity + F(",") + message, nullptr, _failCallback);
+  }
+
 private:
   SoftwareSerial _softSerial;
   Transport _transport;

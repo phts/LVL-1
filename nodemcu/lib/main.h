@@ -5,6 +5,7 @@
 #include <WiFiClient.h>
 #include <Command.h>
 #include <Response.h>
+#include <UrlEncode.h>
 #include "debug.h"
 #include "settings.h"
 
@@ -71,6 +72,36 @@ void level(String value)
   http.end();
 }
 
+void log(String value)
+{
+  int comma = value.indexOf(',');
+  if (comma < 0)
+  {
+    sendFail(String(F("Value wrong format: missing comma")));
+    return;
+  }
+  String severity = value.substring(0, comma);
+  String message = value.substring(comma + 1);
+
+  String url = String(LOG_POST_ENDPOINT);
+  url.replace(F("{{severity}}"), severity);
+  url.replace(F("{{message}}"), urlEncode(message));
+  debug(url);
+  http.begin(client, url);
+  int httpResponseCode = http.POST(F(""));
+  debug(F("Response code"), httpResponseCode);
+
+  if (httpResponseCode < 200 || httpResponseCode > 299)
+  {
+    sendFail(String(F("Response code: ")) + String(httpResponseCode));
+  }
+  else
+  {
+    sendOk();
+  }
+  http.end();
+}
+
 void setup()
 {
   Serial.begin(SERIAL_PORT);
@@ -98,6 +129,10 @@ void loop()
   else if (Command::equals(cmd, F("!level")))
   {
     level(Command::valueOf(cmd));
+  }
+  else if (Command::equals(cmd, F("!log")))
+  {
+    log(Command::valueOf(cmd));
   }
   else if (Command::equals(cmd, F("!healthcheck")))
   {
