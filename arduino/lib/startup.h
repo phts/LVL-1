@@ -20,9 +20,9 @@ public:
     console.info(F("PHTS LVL-1"));
     console.info(F("Staring up..."));
     _starting = true;
+    _connectCallback = connectCallback;
     _indicator->setLed(Indicator::LED_INFO);
     _startupTimer.start();
-    _internet->connect(connectCallback);
   }
 
   void tick()
@@ -32,6 +32,10 @@ public:
       if (_indicator->getLevel() < _maxProgress)
       {
         _indicator->setLevel(_indicator->getLevel() + 1);
+      }
+      if (_indicator->getLevel() == 10)
+      {
+        _internet->connect(_connectCallback);
       }
       if (_indicator->getLevel() == 100)
       {
@@ -55,6 +59,7 @@ private:
   Indicator *_indicator;
   Internet *_internet;
   TimerMs _startupTimer;
+  OnResponseCallback _connectCallback;
   bool _starting;
   int _maxProgress = 90;
 };
