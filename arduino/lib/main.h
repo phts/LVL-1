@@ -6,7 +6,7 @@
 #include "config.h"
 #include "settings.h"
 #include "ultrasonic.h"
-#include "level.h"
+#include "ui.h"
 #include "helpers.h"
 #include "console.h"
 #include "indicator.h"
@@ -18,7 +18,7 @@ Button btnCheck(Config::PIN_BTN_CHECK);
 Ultrasonic ultrasonic(Config::PIN_ULTRASONIC_SENSOR_TRIGGER, Config::PIN_ULTRASONIC_SENSOR_ECHO);
 Led led(Config::PIN_LED);
 Indicator indicator(&led, Config::PIN_METER);
-Level level(&indicator, LEVEL_WARNING);
+UI ui(&indicator, LEVEL_WARNING);
 Internet internet(Config::PIN_MODEM_RX, Config::PIN_MODEM_TX);
 Startup startup(&indicator, &internet);
 
@@ -36,9 +36,9 @@ void connectCallback(String resp)
   }
 }
 
-void reportError(String log)
+void reportError(byte errorCode, String log)
 {
-  indicator.setLed(Indicator::LED_ERROR);
+  ui.showError(errorCode);
   console.info(log);
 }
 
@@ -54,18 +54,18 @@ void check()
   float distance = ultrasonic.getDistance();
   if (distance < 0)
   {
-    reportError(F("Failed to read ultrasonic sensor"));
+    reportError(UI::ERROR_CODE_SENSOR, ("Failed to read ultrasonic sensor"));
     internet.sendLog(F("error"), F("Failed to read ultrasonic sensor"));
     return;
   }
   int lvl = helpers.distanceToLevel(distance);
-  level.setValue(lvl);
+  ui.showLevel(lvl);
   internet.sendLevel(lvl);
 }
 
 void internetErrorCallback(String command, byte type, String desc)
 {
-  reportError(command + String(F(": ")) + desc);
+  reportError(UI::ERROR_CODE_HTTP, command + String(F(": ")) + desc);
   if (Command::equals(command, F("!level")))
   {
     internet.disconnect(nullptr);
@@ -87,7 +87,7 @@ void setup()
 {
   Serial.begin(SERIAL_PORT);
   btnCheck.attach(btnCheckCallback);
-  level.setup();
+  ui.setup();
   checkTimer.attach(check);
   checkTimer.start();
   internet.setup(internetErrorCallback);
@@ -97,7 +97,7 @@ void setup()
 void loop()
 {
   btnCheck.tick();
-  indicator.tick();
+  ui.tick();
   checkTimer.tick();
   internet.tick();
   startup.tick();
