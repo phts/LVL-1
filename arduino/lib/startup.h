@@ -40,6 +40,7 @@ public:
       if (_indicator->getLevel() == 100)
       {
         _startupTimer.stop();
+        _internet->sendLog(F("info"), F("Started"));
         _starting = false;
       }
     }
