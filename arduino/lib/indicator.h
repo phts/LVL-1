@@ -14,15 +14,15 @@ public:
   static const byte LED_ERROR = 2;
   static const byte LED_INFO = 3;
 
-  Indicator(Led *led, byte pinIndicator)
+  Indicator(Led *led, byte pinMeter)
   {
     _led = led;
-    _pinIndicator = pinIndicator;
+    _pinMeter = pinMeter;
   }
 
   void setup()
   {
-    pinMode(_pinIndicator, OUTPUT);
+    pinMode(_pinMeter, OUTPUT);
     _led->setup();
     _ledImpulseTimer.setTimerMode();
   }
@@ -44,7 +44,7 @@ public:
   {
     _level = level;
     int pwm = constrain(map(_level, 0, 100, 0, 255), 0, 255);
-    analogWrite(_pinIndicator, pwm);
+    analogWrite(_pinMeter, pwm);
     console.debug(F("Indicator:: PWM:"), pwm);
   }
 
@@ -82,7 +82,7 @@ public:
 
 private:
   Led *_led;
-  byte _pinIndicator;
+  byte _pinMeter;
   TimerMs _ledBlinkTimer;
   TimerMs _ledImpulseTimer;
   int _level;

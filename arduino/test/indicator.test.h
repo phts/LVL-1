@@ -7,7 +7,7 @@
 
 Button btnCheck(Config::PIN_BTN_CHECK);
 Led led(Config::PIN_LED);
-Indicator indicator(&led, Config::PIN_INDICATOR);
+Indicator indicator(&led, Config::PIN_METER);
 int direction = 1;
 
 void check()

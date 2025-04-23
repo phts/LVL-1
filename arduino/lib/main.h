@@ -17,7 +17,7 @@
 Button btnCheck(Config::PIN_BTN_CHECK);
 Ultrasonic ultrasonic(Config::PIN_ULTRASONIC_SENSOR_TRIGGER, Config::PIN_ULTRASONIC_SENSOR_ECHO);
 Led led(Config::PIN_LED);
-Indicator indicator(&led, Config::PIN_INDICATOR);
+Indicator indicator(&led, Config::PIN_METER);
 Level level(&indicator, LEVEL_WARNING);
 Internet internet(Config::PIN_MODEM_RX, Config::PIN_MODEM_TX);
 Startup startup(&indicator, &internet);
