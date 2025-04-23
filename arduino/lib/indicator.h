@@ -43,7 +43,7 @@ public:
   void setLevel(int level)
   {
     _level = level;
-    int pwm = constrain(map(_level, 0, 100, 0, 255), 0, 255);
+    int pwm = constrain(map(_level, 0, 100, 0, INDICATOR_METER_MAX_PWM), 0, INDICATOR_METER_MAX_PWM);
     analogWrite(_pinMeter, pwm);
     console.debug(F("Indicator:: PWM:"), pwm);
   }
