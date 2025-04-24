@@ -20,7 +20,7 @@ Led led(Config::PIN_LED);
 Indicator indicator(&led, Config::PIN_METER);
 UI ui(&indicator, LEVEL_WARNING);
 Internet internet(Config::PIN_MODEM_RX, Config::PIN_MODEM_TX);
-Startup startup(&indicator, &internet);
+Startup startup(&ui, &internet);
 
 TimerMs checkTimer(CHECK_INITIAL_DELAY);
 
@@ -54,7 +54,8 @@ void check()
   float distance = ultrasonic.getDistance();
   if (distance < 0)
   {
-    reportError(UI::ERROR_CODE_SENSOR, ("Failed to read ultrasonic sensor"));
+    ui.showError(UI::ERROR_CODE_SENSOR);
+    console.info(F("Failed to read ultrasonic sensor"));
     internet.sendLog(F("error"), F("Failed to read ultrasonic sensor"));
     return;
   }
@@ -63,14 +64,32 @@ void check()
   internet.sendLevel(lvl);
 }
 
-void internetErrorCallback(String command, byte type, String desc)
+void transportErrorCallback(String command, byte type, String desc)
 {
-  reportError(UI::ERROR_CODE_HTTP, command + String(F(": ")) + desc);
+  byte uiError;
+  if (type == Transport::FAILURE_TYPE_EXEC_TIMEOUT || type == Transport::FAILURE_TYPE_RESP_TIMEOUT)
+  {
+    uiError = UI::ERROR_CODE_TRANSPORT;
+  }
+  else if (type == Transport::FAILURE_TYPE_RESPONSE && desc == F("Not connected"))
+  {
+    uiError = UI::ERROR_CODE_WIFI;
+  }
+  else
+  {
+    uiError = UI::ERROR_CODE_HTTP;
+    internet.sendLog(F("error"), command + String(F(": ")) + desc);
+  }
+  ui.showTempError(uiError);
+  console.info(command + String(F(": ")) + desc);
+  if (Command::equals(command, F("!connect")))
+  {
+    startup.setMaxProgress(100);
+  }
   if (Command::equals(command, F("!level")))
   {
     internet.disconnect(nullptr);
     internet.connect(nullptr);
-    check();
   }
 }
 
@@ -90,7 +109,7 @@ void setup()
   ui.setup();
   checkTimer.attach(check);
   checkTimer.start();
-  internet.setup(internetErrorCallback);
+  internet.setup(transportErrorCallback);
   startup.setup(connectCallback);
 }
 

@@ -18,7 +18,7 @@ Usually a command looks like: `!<name>` or `!<name>=<params>`. And a response: `
 
 | Command                     | `ok!`                | `fail!=<Description...>`                                                      | Description                                                                |
 | --------------------------- | -------------------- | ----------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-| `!connect`                  | When connected       | -                                                                             | Connect to WiFi. During connection sends responds like `progress!=<value>` |
+| `!connect`                  | When connected       | When failed to connect after `WIFI_STATUS_MAX_RETRIES` retries                | Connect to WiFi. During connection sends responds like `progress!=<value>` |
 | `!disconnect`               | Always               |                                                                               | Disconnect WiFi                                                            |
 | `!level=<value>`            | On 2XX HTTP response | - When not connected<br>- On non-2XX HTTP response                            | Send level value to the website                                            |
 | `!log=<severity>,<message>` | On 2XX HTTP response | - When not connected<br>- On non-2XX HTTP response<br>- On value wrong format | Send log entry to the website                                              |

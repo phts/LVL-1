@@ -31,17 +31,23 @@ void sendFail(String desc)
 
 void connect()
 {
+  byte retry = 0;
   progress = sendProgress(0);
-  debug(F("Connecting to"), WIFI_NAME);
+  debug(F("Connecting to: "), WIFI_NAME);
   WiFi.begin(WIFI_NAME, WIFI_PASSWORD);
   progress = sendProgress(10);
 
-  while (WiFi.status() != WL_CONNECTED)
+  while (WiFi.status() != WL_CONNECTED && retry < WIFI_STATUS_MAX_RETRIES)
   {
     delay(WIFI_STATUS_INTERVAL);
     progress = sendProgress((70 - progress) / 2 + progress);
+    retry++;
   }
-
+  if (WiFi.status() != WL_CONNECTED)
+  {
+    sendFail(F("Not connected"));
+    return;
+  }
   progress = sendProgress(100);
   sendOk();
 }
@@ -74,10 +80,16 @@ void level(String value)
 
 void log(String value)
 {
+  if (WiFi.status() != WL_CONNECTED)
+  {
+    sendFail(F("Not connected"));
+    return;
+  }
+
   int comma = value.indexOf(',');
   if (comma < 0)
   {
-    sendFail(String(F("Value wrong format: missing comma")));
+    sendFail(F("Value wrong format: missing comma"));
     return;
   }
   String severity = value.substring(0, comma);

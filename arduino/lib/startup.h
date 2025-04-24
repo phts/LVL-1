@@ -3,15 +3,15 @@
 
 #include "settings.h"
 #include "console.h"
-#include "indicator.h"
+#include "ui.h"
 #include "internet.h"
 
 class Startup
 {
 public:
-  Startup(Indicator *indicator, Internet *internet) : _startupTimer(STARTUP_TIMER_INTERVAL, 0, 0)
+  Startup(UI *ui, Internet *internet) : _startupTimer(STARTUP_TIMER_INTERVAL)
   {
-    _indicator = indicator;
+    _ui = ui;
     _internet = internet;
   }
 
@@ -21,7 +21,7 @@ public:
     console.info(F("Staring up..."));
     _starting = true;
     _connectCallback = connectCallback;
-    _indicator->setLed(Indicator::LED_INFO);
+    _progress = _ui->showProgressBar();
     _startupTimer.start();
   }
 
@@ -29,15 +29,15 @@ public:
   {
     if (_startupTimer.tick())
     {
-      if (_indicator->getLevel() < _maxProgress)
+      if (_progress < _maxProgress)
       {
-        _indicator->setLevel(_indicator->getLevel() + 1);
+        _progress = _ui->tickProgressBar();
       }
-      if (_indicator->getLevel() == 10)
+      if (_progress == 10)
       {
         _internet->connect(_connectCallback);
       }
-      if (_indicator->getLevel() == 100)
+      if (_progress == 100)
       {
         _startupTimer.stop();
         _internet->sendLog(F("info"), F("Started"));
@@ -51,18 +51,19 @@ public:
     return _starting;
   }
 
-  void setMaxProgress(int value)
+  void setMaxProgress(byte value)
   {
     _maxProgress = value;
   }
 
 private:
-  Indicator *_indicator;
+  UI *_ui;
   Internet *_internet;
   TimerMs _startupTimer;
   OnResponseCallback _connectCallback;
   bool _starting;
-  int _maxProgress = 90;
+  byte _progress;
+  byte _maxProgress = 90;
 };
 
 #endif
