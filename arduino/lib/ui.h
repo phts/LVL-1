@@ -64,11 +64,40 @@ public:
     showLevel(_level);
   }
 
+  void showProgressBar()
+  {
+    console.debug(F("UI"), F("show progress bar"));
+    _progress = 0;
+    _indicator->setLevel(0);
+    _indicator->setLed(Indicator::LED_INFO);
+  }
+
+  void hideProgressBar()
+  {
+    console.debug(F("UI"), F("hide progress bar"));
+    showLevel(_level);
+  }
+
+  void tickProgress()
+  {
+    if (_progress < 100)
+    {
+      _progress++;
+    }
+    _indicator->setLevel(_progress);
+  }
+
+  byte getProgress()
+  {
+    return _progress;
+  }
+
 private:
   Indicator *_indicator;
   byte _warningLevel;
   byte _level = 0;
   TimerMs _autohideErrorTimer;
+  byte _progress = 0;
 };
 
 #endif

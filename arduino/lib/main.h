@@ -20,7 +20,7 @@ Led led(Config::PIN_LED);
 Indicator indicator(&led, Config::PIN_METER);
 UI ui(&indicator, LEVEL_WARNING);
 Internet internet(Config::PIN_MODEM_RX, Config::PIN_MODEM_TX);
-Startup startup(&indicator, &internet);
+Startup startup(&ui, &internet);
 
 TimerMs checkTimer(CHECK_INITIAL_DELAY);
 
@@ -64,6 +64,11 @@ void transportErrorCallback(String command, byte type, String desc)
 {
   String msg = String(F("Failed to process the command \"")) + command + F("\": ") + desc;
   console.info(msg);
+  if (startup.isStarting())
+  {
+    startup.setMaxProgress(100);
+    return;
+  }
   if (Command::equals(command, F("!log")))
   {
     return;
