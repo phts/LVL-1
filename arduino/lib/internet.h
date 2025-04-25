@@ -2,7 +2,6 @@
 #define internet_h
 
 #include <SoftwareSerial.h>
-#include "console.h"
 #include "settings.h"
 #include "transport.h"
 

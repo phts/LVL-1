@@ -45,7 +45,7 @@ public:
     _level = level;
     int pwm = constrain(map(_level, 0, 100, 0, INDICATOR_METER_MAX_PWM), 0, INDICATOR_METER_MAX_PWM);
     analogWrite(_pinMeter, pwm);
-    console.debug(F("Indicator:: PWM:"), pwm);
+    console.debug(F("Indicator"), F("PWM:"), pwm);
   }
 
   int getLevel()
@@ -55,7 +55,7 @@ public:
 
   void setLed(byte type)
   {
-    console.debug(F("Indicator:: LED:"), type);
+    console.debug(F("Indicator"), F("LED:"), type);
     _ledBlinkTimer.stop();
     switch (type)
     {

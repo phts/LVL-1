@@ -34,18 +34,18 @@ public:
     }
     if (realValues < ULTRASONIC_MAX_SAMPLES)
     {
-      console.debug(F("Ultrasonic:: distance:"), -1);
+      console.debug(F("Ultrasonic"), F("distance:"), -1);
       return -1;
     }
 
     utils.sort(samples, ULTRASONIC_MAX_SAMPLES);
-    console.debug(F("Ultrasonic:: samples:"), samples, ULTRASONIC_MAX_SAMPLES);
+    console.debug(F("Ultrasonic"), F("samples:"), samples, ULTRASONIC_MAX_SAMPLES);
     float *middleSamples = utils.subarray(samples, ULTRASONIC_TRIM_SAMPLES, ULTRASONIC_MAX_SAMPLES - ULTRASONIC_TRIM_SAMPLES);
     int s = ULTRASONIC_MAX_SAMPLES - ULTRASONIC_TRIM_SAMPLES * 2;
-    console.debug(F("Ultrasonic:: middle samples:"), middleSamples, s);
+    console.debug(F("Ultrasonic"), F("middle samples:"), middleSamples, s);
     float res = utils.average(middleSamples, s);
     delete[] middleSamples;
-    console.debug(F("Ultrasonic:: distance:"), res);
+    console.debug(F("Ultrasonic"), F("distance:"), res);
     return res;
   }
 

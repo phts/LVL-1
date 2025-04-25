@@ -1,8 +1,6 @@
 #ifndef utils_h
 #define utils_h
 
-#include "console.h"
-
 class Utils
 {
 public:

@@ -29,7 +29,7 @@ public:
 
   void showLevel(int value)
   {
-    console.debug(F("UI:: show level:"), value);
+    console.debug(F("UI"), F("show level:"), value);
     bool warning = value >= _warningLevel;
     _indicator->setLevel(value);
     _indicator->setLed(warning ? Indicator::LED_WARNING : Indicator::LED_OFF);
@@ -37,7 +37,7 @@ public:
 
   void showError(byte code)
   {
-    console.debug(F("UI:: show error:"), code);
+    console.debug(F("UI"), F("show error:"), code);
     _indicator->setLevel(100 / ERRORS_SIZE * code);
     _indicator->setLed(Indicator::LED_ERROR);
   }

@@ -42,7 +42,7 @@ public:
   }
   void exec(String command, OnResponseCallback onResponse, OnFailureCallback onFailure)
   {
-    console.debug(F("Transport:: exec:"), command);
+    console.debug(F("Transport"), F("exec:"), command);
     if (_queue.isFull())
     {
       console.info(F("Command queue is full"));
@@ -86,16 +86,16 @@ private:
   {
     if (_queue.isEmpty())
     {
-      console.debug(F("Transport:: execQueue: empty"));
+      console.debug(F("Transport"), F("execQueue: empty"));
       return;
     }
     if (isBusy())
     {
-      console.debug(F("Transport:: execQueue: busy"));
+      console.debug(F("Transport"), F("execQueue: busy"));
       return;
     }
     _processingEntry = _queue.dequeue();
-    console.debug(F("Transport:: execQueue: taking next command: "), _processingEntry.command);
+    console.debug(F("Transport"), F("execQueue: taking next command:"), _processingEntry.command);
     _state = STATE_WAITING;
     _response = F("");
     _serial->flush();
@@ -154,7 +154,7 @@ private:
     {
       _state = STATE_WAITING;
       _responseTimeoutTimer.restart();
-      console.debug(F("Transport:: >"), _response);
+      console.debug(F("Transport"), F(">"), _response);
       if (Response::isSuccess(_response))
       {
         finish();
@@ -173,7 +173,7 @@ private:
 
   void finish()
   {
-    console.debug(F("Transport:: finish"));
+    console.debug(F("Transport"), F("finish"));
     _state = STATE_READY;
     _executionTimeoutTimer.stop();
     _responseTimeoutTimer.stop();
@@ -183,7 +183,7 @@ private:
 
   void fail(byte type, String desc)
   {
-    console.debug(F("Transport:: fail"), String(type) + desc);
+    console.debug(F("Transport"), F("fail:"), String(F("type=")) + type + String(F(" desc=")) + desc);
     if (*_processingEntry.onFailure)
     {
       _processingEntry.onFailure(_processingEntry.command, type, desc);
