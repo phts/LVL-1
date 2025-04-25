@@ -20,7 +20,11 @@ public:
 
   connect(OnResponseCallback onResponse)
   {
-    _transport.exec(F("!connect"), onResponse, _failCallback);
+    connect(onResponse, _failCallback);
+  }
+  connect(OnResponseCallback onResponse, OnFailureCallback overridenFailCallback)
+  {
+    _transport.exec(F("!connect"), onResponse, overridenFailCallback);
   }
 
   disconnect(OnResponseCallback onResponse)

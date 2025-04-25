@@ -86,8 +86,7 @@ void transportErrorCallback(String command, byte type, String desc)
   if (Command::equals(command, F("!level")))
   {
     internet.disconnect(nullptr);
-    internet.connect(nullptr);
-    check();
+    internet.connect(nullptr, nullptr);
   }
   internet.sendLog(F("error"), msg + F("\ntype=") + type + F(", code=") + uiError);
 }
