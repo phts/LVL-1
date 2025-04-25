@@ -31,17 +31,23 @@ void sendFail(String desc)
 
 void connect()
 {
+  byte retry = 0;
   progress = sendProgress(0);
   debug(F("Connecting to"), WIFI_NAME);
   WiFi.begin(WIFI_NAME, WIFI_PASSWORD);
   progress = sendProgress(10);
 
-  while (WiFi.status() != WL_CONNECTED)
+  while (WiFi.status() != WL_CONNECTED && retry < WIFI_STATUS_MAX_RETRIES)
   {
     delay(WIFI_STATUS_INTERVAL);
     progress = sendProgress((70 - progress) / 2 + progress);
+    retry++;
   }
-
+  if (WiFi.status() != WL_CONNECTED)
+  {
+    sendFail(F("Not connected"));
+    return;
+  }
   progress = sendProgress(100);
   sendOk();
 }
