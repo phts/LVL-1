@@ -36,17 +36,13 @@ void connectCallback(String resp)
   }
 }
 
-void reportError(byte errorCode, String log)
-{
-  ui.showError(errorCode);
-  console.info(log);
-}
-
 void check()
 {
   if (startup.isStarting())
   {
-    console.info(F("Not started yet. Check skipped..."));
+    String msg = F("Not started yet. Check skipped...");
+    console.info(msg);
+    internet.sendLog(F("warn"), msg);
     return;
   }
   checkTimer.setTime(CHECK_INTERVAL);
@@ -54,8 +50,9 @@ void check()
   float distance = ultrasonic.getDistance();
   if (distance < 0)
   {
-    reportError(UI::ERROR_CODE_SENSOR, ("Failed to read ultrasonic sensor"));
-    internet.sendLog(F("error"), F("Failed to read ultrasonic sensor"));
+    ui.showError(UI::ERROR_CODE_SENSOR);
+    console.info(F("Failed to read ultrasonic sensor"));
+    internet.sendLog(F("fatal"), F("Failed to read ultrasonic sensor"));
     return;
   }
   int lvl = helpers.distanceToLevel(distance);
@@ -65,13 +62,34 @@ void check()
 
 void transportErrorCallback(String command, byte type, String desc)
 {
-  reportError(UI::ERROR_CODE_HTTP, command + String(F(": ")) + desc);
+  String msg = String(F("Failed to process the command \"")) + command + F("\": ") + desc;
+  console.info(msg);
+  if (Command::equals(command, F("!log")))
+  {
+    return;
+  }
+
+  byte uiError;
+  if (type == Transport::FAILURE_TYPE_EXEC_TIMEOUT || type == Transport::FAILURE_TYPE_RESP_TIMEOUT)
+  {
+    uiError = UI::ERROR_CODE_TRANSPORT;
+  }
+  else if (type == Transport::FAILURE_TYPE_RESPONSE && desc == F("Not connected"))
+  {
+    uiError = UI::ERROR_CODE_WIFI;
+  }
+  else
+  {
+    uiError = UI::ERROR_CODE_HTTP;
+  }
+  ui.showError(uiError, true);
   if (Command::equals(command, F("!level")))
   {
     internet.disconnect(nullptr);
     internet.connect(nullptr);
     check();
   }
+  internet.sendLog(F("error"), msg + F("\ntype=") + type + F(", code=") + uiError);
 }
 
 void btnCheckCallback()

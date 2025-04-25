@@ -28,6 +28,8 @@
 #define TRANSPORT_TIMEOUT_EXECUTION 120000
 #define TRANSPORT_TIMEOUT_RESPONSE 60000
 
+#define UI_ERROR_AUTOHIDE_DELAY 60000
+
 #if __has_include("settings.local.h")
 #include "settings.local.h"
 #endif
