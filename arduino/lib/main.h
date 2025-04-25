@@ -63,7 +63,7 @@ void check()
   internet.sendLevel(lvl);
 }
 
-void internetErrorCallback(String command, byte type, String desc)
+void transportErrorCallback(String command, byte type, String desc)
 {
   reportError(UI::ERROR_CODE_HTTP, command + String(F(": ")) + desc);
   if (Command::equals(command, F("!level")))
@@ -90,7 +90,7 @@ void setup()
   ui.setup();
   checkTimer.attach(check);
   checkTimer.start();
-  internet.setup(internetErrorCallback);
+  internet.setup(transportErrorCallback);
   startup.setup(connectCallback);
 }
 
