@@ -6,7 +6,7 @@ Features:
 
 - Use ultrasonic sensor to measure distance
 - Show level on the big fancy indicator
-- Send levels and logs to [szambo.tsaryk.com] via WiFi
+- Send levels and logs to [szambo.tsaryk.com] via Wi-Fi
 - 24/7 monitoring
 
 ## Firmware
@@ -44,7 +44,7 @@ Hosted on: [OSHWLab/phts/lvl-1](https://oshwlab.com/phts/lvl-1).
 | ---- | --------- | ------------------------------------ |
 | 1    | Fatal     | Ultrasonic sensor failure            |
 | 2    | Temporary | NodeMCU module communication failure |
-| 3    | Temporary | WiFi connection failure              |
+| 3    | Temporary | Wi-Fi connection failure             |
 | 4    | Temporary | Unexpected HTTP response             |
 
 - `Fatal` &mdash; will be indicated constantly until the failure is gone

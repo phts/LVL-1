@@ -28,11 +28,12 @@ void connectCallback(String resp)
 {
   if (Response::equals(resp, F("progress!")))
   {
-    startup.setMaxProgress(Response::valueOf(resp).toInt());
-  }
-  if (Response::isSuccess(resp))
-  {
-    startup.setMaxProgress(100);
+    int progress = Response::valueOf(resp).toInt();
+    startup.setMaxProgress(progress);
+    if (progress == 100)
+    {
+      internet.sendLog(F("info"), F("Connected to Wi-Fi"));
+    }
   }
 }
 
@@ -91,7 +92,7 @@ void transportErrorCallback(String command, byte type, String desc)
   if (Command::equals(command, F("!level")))
   {
     internet.disconnect(nullptr);
-    internet.connect(nullptr, nullptr);
+    internet.connect(connectCallback, nullptr);
   }
   internet.sendLog(F("error"), msg + F("\ntype=") + type + F(", code=") + uiError);
 }
