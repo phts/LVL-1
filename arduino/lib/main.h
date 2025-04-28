@@ -53,9 +53,10 @@ void check()
   {
     ui.showError(UI::ERROR_CODE_SENSOR);
     console.info(F("Failed to read ultrasonic sensor"));
-    internet.sendLog(F("fatal"), F("Failed to read ultrasonic sensor"));
+    internet.sendLog(F("fatal"), String(F("Failed to read ultrasonic sensor: ")) + distance);
     return;
   }
+  internet.sendLog(F("debug"), String(F("Distance from ultrasonic sensor: ")) + distance);
   int lvl = helpers.distanceToLevel(distance);
   ui.showLevel(lvl);
   internet.sendLevel(lvl);
