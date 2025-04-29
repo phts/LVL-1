@@ -12,37 +12,37 @@ public:
   {
   }
 
-  setup(OnFailureCallback failCallback)
+  void setup(OnFailureCallback failCallback)
   {
     _softSerial.begin(SERIAL_PORT);
     _failCallback = failCallback;
   }
 
-  connect(OnResponseCallback onResponse)
+  void connect(OnResponseCallback onResponse)
   {
     connect(onResponse, _failCallback);
   }
-  connect(OnResponseCallback onResponse, OnFailureCallback overridenFailCallback)
+  void connect(OnResponseCallback onResponse, OnFailureCallback overridenFailCallback)
   {
     _transport.exec(F("!connect"), onResponse, overridenFailCallback);
   }
 
-  disconnect(OnResponseCallback onResponse)
+  void disconnect(OnResponseCallback onResponse)
   {
     _transport.exec(F("!disconnect"), onResponse);
   }
 
-  tick()
+  void tick()
   {
     _transport.tick();
   }
 
-  sendLevel(int value)
+  void sendLevel(int value)
   {
     _transport.execWithValue(F("!level"), String(value), nullptr, _failCallback);
   }
 
-  sendLog(String severity, String message)
+  void sendLog(String severity, String message)
   {
     _transport.execWithValue(F("!log"), severity + F(",") + message, nullptr, _failCallback);
   }
