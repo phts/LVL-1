@@ -21,12 +21,12 @@ int sendProgress(int value)
 
 void sendOk()
 {
-  Serial.println(Response::Success);
+  Serial.println(Response::success());
 }
 
 void sendFail(String desc)
 {
-  Serial.println(Response::withValue(Response::Failure, desc));
+  Serial.println(Response::withValue(Response::failure(), desc));
 }
 
 void connect()

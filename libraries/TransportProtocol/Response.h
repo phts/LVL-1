@@ -6,16 +6,21 @@
 class Response
 {
 public:
-  static inline const char *Success = "ok!";
-  static inline const char *Failure = "fail!";
-
+  static String success()
+  {
+    return F("ok!");
+  }
+  static String failure()
+  {
+    return F("fail!");
+  }
   static bool isSuccess(String resp)
   {
-    return resp == Response::Success;
+    return resp == success();
   }
   static bool isFailure(String resp)
   {
-    return resp.startsWith(Response::Failure);
+    return resp.startsWith(failure());
   }
   static bool equals(String resp1, String resp2)
   {
