@@ -29,7 +29,7 @@ Usually a command looks like: `!<name>` or `!<name>=<params>`. And a response: `
 
 ## Development
 
-## Prepare
+## Setup
 
 1. Add `http://arduino.esp8266.com/stable/package_esp8266com_index.json` into Preferences &rarr; `Additional Boards Manager URLs`
 2. Go to `Boards Manager`

@@ -6,6 +6,12 @@ By design it is able to work without internet connection or even without whole [
 
 ## Development
 
+### Setup
+
+1. Board: `Arduino Nano`
+2. Processor: `ATmega328P`
+3. Programmer: `AVRISP mkII`
+
 ### Libraries
 
 - [ArduinoQueue](https://github.com/EinarArnason/ArduinoQueue)
