@@ -25,6 +25,7 @@ Usually a command looks like: `!<name>` or `!<name>=<params>`. And a response: `
 | `!healthcheck`              | Always               | -                                                                             | Respond with success at once                                                |
 | `!fail=<desc>`              | -                    | Always                                                                        | Respond with failure at once (for testing)                                  |
 | `!ping=<n>`                 | Always               |                                                                               | Send `pong!=<i>` back `n` times with 10 sec delay                           |
+| Any unknown command         | -                    | Always                                                                        |                                                                             |
 
 ## Development
 

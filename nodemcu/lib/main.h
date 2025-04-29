@@ -166,7 +166,7 @@ void loop()
   }
   else
   {
-    debug(F("Unknown"));
+    sendFail(F("Unknown command"));
   }
 }
 
