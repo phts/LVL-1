@@ -3,6 +3,7 @@
 
 #include <EncButton.h>
 #include <Response.h>
+#include <TimerMs.h>
 #include "config.h"
 #include "settings.h"
 #include "ultrasonic.h"
@@ -48,7 +49,11 @@ void check()
   }
   checkTimer.setTime(CHECK_INTERVAL);
   checkTimer.start();
-  float distance = ultrasonic.getDistance();
+  ultrasonic.requestDistance();
+}
+
+void distanceCallback(float distance)
+{
   if (distance < 0)
   {
     ui.showError(UI::ERROR_CODE_SENSOR);
@@ -115,6 +120,7 @@ void setup()
   checkTimer.attach(check);
   checkTimer.start();
   internet.setup(transportErrorCallback);
+  ultrasonic.setup(distanceCallback);
   startup.setup(connectCallback);
 }
 
@@ -124,6 +130,7 @@ void loop()
   ui.tick();
   checkTimer.tick();
   internet.tick();
+  ultrasonic.tick();
   startup.tick();
 }
 
