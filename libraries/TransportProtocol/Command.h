@@ -21,7 +21,9 @@ public:
 
   static String withValue(String command, String value)
   {
-    return command + F("=") + value;
+    command.concat(F("="));
+    command.concat(value);
+    return command;
   }
 };
 
