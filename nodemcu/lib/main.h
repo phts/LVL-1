@@ -53,6 +53,7 @@ void sendFail(String desc)
 
 void connect()
 {
+  WiFi.disconnect();
   byte retry = 0;
   progress = sendProgress(0);
   debug(F("Connecting to"), WIFI_NAME);
@@ -65,6 +66,7 @@ void connect()
     progress = sendProgress((70 - progress) / 2 + progress);
     retry++;
   }
+  delay(WIFI_STATUS_INTERVAL * 2);
   if (WiFi.status() != WL_CONNECTED)
   {
     sendFail(String(F("Not connected: status=")) + WiFi.status());
