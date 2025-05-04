@@ -44,7 +44,9 @@ public:
 
   void sendLog(String severity, String message)
   {
-    _transport.execWithValue(F("!log"), severity + F(",") + message, nullptr, _failCallback);
+    severity.concat(F(","));
+    severity.concat(message);
+    _transport.execWithValue(F("!log"), severity, nullptr, _failCallback);
   }
 
 private:

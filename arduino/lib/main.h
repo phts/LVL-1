@@ -69,7 +69,11 @@ void distanceCallback(float distance)
 
 void transportErrorCallback(String command, byte type, String desc)
 {
-  String msg = String(F("Failed to process the command \"")) + command + F("\": ") + desc;
+  String msg;
+  msg.concat(F("Failed to process the command \""));
+  msg.concat(command);
+  msg.concat(F("\": "));
+  msg.concat(desc);
   console.info(msg);
   if (startup.isStarting())
   {
@@ -100,7 +104,14 @@ void transportErrorCallback(String command, byte type, String desc)
     internet.disconnect(nullptr);
     internet.connect(connectCallback, nullptr);
   }
-  internet.sendLog(F("error"), msg + F("\ntype=") + type + F(", code=") + uiError);
+
+  String msg2;
+  msg2.concat(msg);
+  msg2.concat(F("\ntype="));
+  msg2.concat(type);
+  msg2.concat(F(", code="));
+  msg2.concat(uiError);
+  internet.sendLog(F("error"), msg2);
 }
 
 void btnCheckCallback()
