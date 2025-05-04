@@ -9,6 +9,28 @@
 #include "debug.h"
 #include "settings.h"
 
+// HTTPC_ERROR_CONNECTION_FAILED   = -1
+// HTTPC_ERROR_SEND_HEADER_FAILED  = -2
+// HTTPC_ERROR_SEND_PAYLOAD_FAILED = -3
+// HTTPC_ERROR_NOT_CONNECTED       = -4
+// HTTPC_ERROR_CONNECTION_LOST     = -5
+// HTTPC_ERROR_NO_STREAM           = -6
+// HTTPC_ERROR_NO_HTTP_SERVER      = -7
+// HTTPC_ERROR_TOO_LESS_RAM        = -8
+// HTTPC_ERROR_ENCODING            = -9
+// HTTPC_ERROR_STREAM_WRITE        = -10
+// HTTPC_ERROR_READ_TIMEOUT        = -11
+
+// WL_NO_SHIELD        = 255
+// WL_IDLE_STATUS      = 0
+// WL_NO_SSID_AVAIL    = 1
+// WL_SCAN_COMPLETED   = 2
+// WL_CONNECTED        = 3
+// WL_CONNECT_FAILED   = 4
+// WL_CONNECTION_LOST  = 5
+// WL_WRONG_PASSWORD   = 6
+// WL_DISCONNECTED     = 7
+
 WiFiClient client;
 HTTPClient http;
 int progress = 0;
@@ -45,7 +67,7 @@ void connect()
   }
   if (WiFi.status() != WL_CONNECTED)
   {
-    sendFail(F("Not connected"));
+    sendFail(String(F("Not connected: status=")) + WiFi.status());
     return;
   }
   progress = sendProgress(100);
@@ -56,7 +78,7 @@ void level(String value)
 {
   if (WiFi.status() != WL_CONNECTED)
   {
-    sendFail(F("Not connected"));
+    sendFail(String(F("Not connected: status=")) + WiFi.status());
     return;
   }
 
@@ -82,7 +104,7 @@ void log(String value)
 {
   if (WiFi.status() != WL_CONNECTED)
   {
-    sendFail(F("Not connected"));
+    sendFail(String(F("Not connected: status=")) + WiFi.status());
     return;
   }
 
