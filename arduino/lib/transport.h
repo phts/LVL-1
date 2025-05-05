@@ -17,7 +17,8 @@ class Transport
 public:
   struct CommandEntry
   {
-    String command;
+    const __FlashStringHelper *command;
+    String value;
     OnResponseCallback onResponse;
     OnFailureCallback onFailure;
   };
@@ -30,31 +31,35 @@ public:
                                       _queue(Transport::QUEUE_MAX_LEN)
   {
     _serial = serial;
+    _response.reserve(100);
   }
 
-  void exec(String command)
+  void exec(const __FlashStringHelper *command)
   {
-    exec(command, nullptr, nullptr);
+    exec(command, F(""), nullptr, nullptr);
   }
-  void exec(String command, OnResponseCallback onResponse)
+  void exec(const __FlashStringHelper *command, OnResponseCallback onResponse)
   {
-    exec(command, onResponse, nullptr);
+    exec(command, F(""), onResponse, nullptr);
   }
-  void exec(String command, OnResponseCallback onResponse, OnFailureCallback onFailure)
+  void exec(const __FlashStringHelper *command, OnResponseCallback onResponse, OnFailureCallback onFailure)
+  {
+    exec(command, F(""), onResponse, onFailure);
+  }
+  void exec(const __FlashStringHelper *command, String value, OnResponseCallback onResponse, OnFailureCallback onFailure)
   {
     console.debug(F("Transport"), F("exec:"), command);
+    if (value.length() > 0)
+    {
+      console.debug(F("Transport"), F("with value:"), value);
+    }
     if (_queue.isFull())
     {
       console.info(F("Command queue is full"));
       return;
     }
-    _queue.enqueue({command, onResponse, onFailure});
+    _queue.enqueue({command, value, onResponse, onFailure});
     execQueue();
-  }
-
-  void execWithValue(String command, String value, OnResponseCallback onResponse, OnFailureCallback onFailure)
-  {
-    exec(Command::withValue(command, value), onResponse, onFailure);
   }
 
   boolean isBusy()
@@ -96,10 +101,20 @@ private:
     }
     _processingEntry = _queue.dequeue();
     console.debug(F("Transport"), F("execQueue: taking next command:"), _processingEntry.command);
+    console.debug(F("Transport"), F("execQueue: with value:"), _processingEntry.value);
     _state = STATE_WAITING;
     _response = F("");
     _serial->flush();
-    _serial->println(_processingEntry.command);
+    if (_processingEntry.value.length() > 0)
+    {
+      _serial->print(_processingEntry.command);
+      _serial->print(Command::ValueDivider);
+      _serial->println(_processingEntry.value);
+    }
+    else
+    {
+      _serial->println(_processingEntry.command);
+    }
     _executionTimeoutTimer.start();
     _responseTimeoutTimer.start();
   }
@@ -183,7 +198,8 @@ private:
 
   void fail(byte type, String desc)
   {
-    console.debug(F("Transport"), F("fail:"), String(F("type=")) + type + String(F(" desc=")) + desc);
+    console.debug(F("Transport"), F("fail: type="), type);
+    console.debug(F("Transport"), F("fail: desc="), desc);
     if (*_processingEntry.onFailure)
     {
       _processingEntry.onFailure(_processingEntry.command, type, desc);

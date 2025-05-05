@@ -39,14 +39,16 @@ public:
 
   void sendLevel(int value)
   {
-    _transport.execWithValue(F("!level"), String(value), nullptr, _failCallback);
+    _transport.exec(F("!level"), String(value), nullptr, _failCallback);
   }
 
-  void sendLog(String severity, String message)
+  void sendLog(const __FlashStringHelper *severity, String message)
   {
-    severity.concat(F(","));
-    severity.concat(message);
-    _transport.execWithValue(F("!log"), severity, nullptr, _failCallback);
+    String msg;
+    msg.concat(severity);
+    msg.concat(F(","));
+    msg.concat(message);
+    _transport.exec(F("!log"), msg, nullptr, _failCallback);
   }
 
 private:
