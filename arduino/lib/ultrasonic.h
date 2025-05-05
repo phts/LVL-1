@@ -7,7 +7,7 @@
 #include "utils.h"
 #include "console.h"
 
-typedef void (*OnDistanceCallback)(float distance);
+typedef void (*OnDistanceCallback)(float distance, float samples[], byte samples_len);
 
 class Ultrasonic
 {
@@ -70,7 +70,7 @@ private:
     if (samples_len < ULTRASONIC_MAX_SAMPLES)
     {
       console.debug(F("Ultrasonic"), F("distance:"), -1);
-      _onDistanceCallback(-1);
+      _onDistanceCallback(-1, samples, samples_len);
       return;
     }
 
@@ -82,7 +82,7 @@ private:
     float res = utils.average(middleSamples, s);
     delete[] middleSamples;
     console.debug(F("Ultrasonic"), F("distance:"), res);
-    _onDistanceCallback(res);
+    _onDistanceCallback(res, samples, samples_len);
   }
 };
 

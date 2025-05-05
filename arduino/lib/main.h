@@ -52,8 +52,12 @@ void check()
   ultrasonic.requestDistance();
 }
 
-void distanceCallback(float distance)
+void distanceCallback(float distance, float samples[], byte samples_len)
 {
+  String msg;
+  msg.concat(F("Ultrasonic samples: "));
+  msg.concat(helpers.arrayToString(samples, samples_len));
+  internet.sendLog(F("debug"), msg);
   if (distance < 0)
   {
     ui.showError(UI::ERROR_CODE_SENSOR);
