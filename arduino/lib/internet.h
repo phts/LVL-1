@@ -39,7 +39,7 @@ public:
 
   void sendLevel(int value)
   {
-    _transport.execWithValue(F("!level"), String(value), nullptr, _failCallback);
+    _transport.exec(F("!level"), String(value), nullptr, _failCallback);
   }
 
   void sendLog(const __FlashStringHelper *severity, String message)
@@ -48,7 +48,12 @@ public:
     msg.concat(severity);
     msg.concat(F(","));
     msg.concat(message);
-    _transport.execWithValue(F("!log"), msg, nullptr, _failCallback);
+    _transport.exec(F("!log"), msg, nullptr, _failCallback);
+  }
+
+  void getRemoteControl(OnResponseCallback onResponse)
+  {
+    _transport.exec(F("!rc"), onResponse, _failCallback);
   }
 
 private:

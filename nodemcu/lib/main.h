@@ -35,9 +35,22 @@ WiFiClient client;
 HTTPClient http;
 int progress = 0;
 
+void sendValue(const __FlashStringHelper *cmd, int value)
+{
+  Serial.print(cmd);
+  Serial.print(Command::ValueDivider);
+  Serial.println(value);
+}
+void sendValue(const __FlashStringHelper *cmd, String value)
+{
+  Serial.print(cmd);
+  Serial.print(Response::ValueDivider);
+  Serial.println(value);
+}
+
 int sendProgress(int value)
 {
-  Serial.println(Response::withValue(F("progress!"), String(value)));
+  sendValue(F("progress!"), value);
   return value;
 }
 
@@ -48,7 +61,9 @@ void sendOk()
 
 void sendFail(String desc)
 {
-  Serial.println(Response::withValue(Response::failure(), desc));
+  Serial.print(Response::failure());
+  Serial.print(Response::ValueDivider);
+  Serial.println(desc);
 }
 
 void connect()
@@ -88,18 +103,18 @@ void level(String value)
   url.replace(F("{{value}}"), value);
   debug(url);
   http.begin(client, url);
-  int httpResponseCode = http.POST(F(""));
-  debug(F("Response code"), httpResponseCode);
+  int code = http.POST(F(""));
+  http.end();
+  debug(F("Response code"), code);
 
-  if (httpResponseCode < 200 || httpResponseCode > 299)
+  if (code < 200 || code > 299)
   {
-    sendFail(String(F("Response code: ")) + String(httpResponseCode));
+    sendFail(String(F("Response code: ")) + code);
   }
   else
   {
     sendOk();
   }
-  http.end();
 }
 
 void log(String value)
@@ -124,18 +139,55 @@ void log(String value)
   url.replace(F("{{message}}"), urlEncode(message));
   debug(url);
   http.begin(client, url);
-  int httpResponseCode = http.POST(F(""));
-  debug(F("Response code"), httpResponseCode);
+  int code = http.POST(F(""));
+  http.end();
+  debug(F("Response code"), code);
 
-  if (httpResponseCode < 200 || httpResponseCode > 299)
+  if (code < 200 || code > 299)
   {
-    sendFail(String(F("Response code: ")) + String(httpResponseCode));
+    sendFail(String(F("Response code: ")) + code);
   }
   else
   {
     sendOk();
   }
+}
+
+void rc()
+{
+  if (WiFi.status() != WL_CONNECTED)
+  {
+    sendFail(String(F("Not connected: status=")) + WiFi.status());
+    return;
+  }
+
+  debug(RC_GET_ENDPOINT);
+  http.begin(client, RC_GET_ENDPOINT);
+
+  int code = http.GET();
+  debug(F("Response code"), code);
+  if (code < 200 || code > 299)
+  {
+    sendFail(String(F("Response code: ")) + code);
+    http.end();
+    return;
+  }
+
+  String response = http.getString();
   http.end();
+  debug(F("Response"), response);
+
+  int divider = response.indexOf('|');
+  if (divider < 0)
+  {
+    sendFail(F("Response wrong format: missing divider"));
+    return;
+  }
+  String id = response.substring(0, divider);
+  String action = response.substring(divider + 1);
+  sendValue(F("id!"), id);
+  sendValue(F("action!"), action);
+  sendOk();
 }
 
 void setup()
@@ -170,6 +222,10 @@ void loop()
   {
     log(Command::valueOf(cmd));
   }
+  else if (Command::equals(cmd, F("!rc")))
+  {
+    rc();
+  }
   else if (Command::equals(cmd, F("!healthcheck")))
   {
     sendOk();
@@ -183,7 +239,7 @@ void loop()
     int times = Command::valueOf(cmd).toInt();
     for (int i = 0; i < times; i++)
     {
-      Serial.println(Command::withValue(F("pong!"), String(i + 1)));
+      sendValue(F("pong!"), i + 1);
       delay(10000);
     }
     sendOk();

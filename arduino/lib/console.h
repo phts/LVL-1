@@ -13,6 +13,10 @@ public:
     Serial.println(str);
   }
 #if DEBUG
+  void debug(const __FlashStringHelper *str)
+  {
+    Serial.println(str);
+  }
   void debug(const __FlashStringHelper *scope, const __FlashStringHelper *str)
   {
     Serial.print(scope);

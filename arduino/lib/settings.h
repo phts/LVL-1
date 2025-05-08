@@ -30,6 +30,8 @@
 
 #define UI_ERROR_AUTOHIDE_DELAY 60000
 
+#define REMOTE_CONTROL_INTERVAL 600000 // 10 min
+
 #if __has_include("settings.local.h")
 #include "settings.local.h"
 #endif
