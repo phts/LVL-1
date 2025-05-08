@@ -124,15 +124,15 @@ void remoteControlActionCallback(String resp)
 {
   if (Response::equals(resp, F("id!")))
   {
-    console.debug(F("RC id!!!"), Response::valueOf(resp));
+    remoteControl.setNextId(Response::valueOf(resp));
   }
-  if (Response::equals(resp, F("action!")))
+  else if (Response::equals(resp, F("action!")))
   {
-    console.debug(F("RC action!!!"), Response::valueOf(resp));
+    remoteControl.setNextAction(Response::valueOf(resp));
   }
-  if (Response::isSuccess(resp))
+  else if (Response::isSuccess(resp))
   {
-    console.debug(F("RC success!!"));
+    remoteControl.saveNext();
   }
 }
 
@@ -167,6 +167,15 @@ void loop()
   ultrasonic.tick();
   startup.tick();
   remoteControl.tick();
+  switch (remoteControl.getAction())
+  {
+  case RemoteControl::ACTION_CHECK:
+    remoteControl.markAsProcessed();
+    check();
+    break;
+  default:
+    break;
+  }
 }
 
 #endif
