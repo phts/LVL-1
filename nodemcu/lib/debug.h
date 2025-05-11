@@ -6,34 +6,45 @@
 #if DEBUG
 void debug(byte number)
 {
-  Serial.println(String(number));
+  Serial.println(number);
 }
 
+void debug(const __FlashStringHelper *str)
+{
+  Serial.println(str);
+}
 void debug(String str)
 {
   Serial.println(str);
 }
 
-void debug(String label, String value)
+void debug(const __FlashStringHelper *label, String value)
 {
-  Serial.println(label + ": " + value);
+  Serial.print(label);
+  Serial.print(F(": "));
+  Serial.println(value);
 }
 
-void debug(String label, int value)
+void debug(const __FlashStringHelper *label, int value)
 {
-  Serial.println(label + ": " + String(value));
+  Serial.print(label);
+  Serial.print(F(": "));
+  Serial.println(value);
 }
 #else
-void debug(byte str)
+void debug(byte number)
+{
+}
+void debug(const __FlashStringHelper *str)
 {
 }
 void debug(String str)
 {
 }
-void debug(String label, String value)
+void debug(const __FlashStringHelper *label, String value)
 {
 }
-void debug(String label, int value)
+void debug(const __FlashStringHelper *label, int value)
 {
 }
 #endif

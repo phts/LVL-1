@@ -20,13 +20,6 @@ public:
     }
     return command.substring(pos + 1);
   }
-
-  static String withValue(String command, String value)
-  {
-    command.concat(ValueDivider);
-    command.concat(value);
-    return command;
-  }
 };
 
 #endif

@@ -35,9 +35,22 @@ WiFiClient client;
 HTTPClient http;
 int progress = 0;
 
+void sendValue(const __FlashStringHelper *cmd, int value)
+{
+  Serial.print(cmd);
+  Serial.print(Command::ValueDivider);
+  Serial.println(value);
+}
+void sendValue(const __FlashStringHelper *cmd, String value)
+{
+  Serial.print(cmd);
+  Serial.print(Response::ValueDivider);
+  Serial.println(value);
+}
+
 int sendProgress(int value)
 {
-  Serial.println(Response::withValue(F("progress!"), String(value)));
+  sendValue(F("progress!"), value);
   return value;
 }
 
@@ -48,7 +61,7 @@ void sendOk()
 
 void sendFail(String desc)
 {
-  Serial.println(Response::withValue(Response::failure(), desc));
+  sendValue(Response::failure(), desc);
 }
 
 void connect()
@@ -183,7 +196,7 @@ void loop()
     int times = Command::valueOf(cmd).toInt();
     for (int i = 0; i < times; i++)
     {
-      Serial.println(Command::withValue(F("pong!"), String(i + 1)));
+      sendValue(F("pong!"), i + 1);
       delay(10000);
     }
     sendOk();

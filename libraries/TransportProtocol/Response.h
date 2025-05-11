@@ -6,11 +6,13 @@
 class Response
 {
 public:
-  static String success()
+  static const char ValueDivider = Command::ValueDivider;
+
+  static const __FlashStringHelper *success()
   {
     return F("ok!");
   }
-  static String failure()
+  static const __FlashStringHelper *failure()
   {
     return F("fail!");
   }
@@ -29,10 +31,6 @@ public:
   static String valueOf(String resp)
   {
     return Command::valueOf(resp);
-  }
-  static String withValue(String resp, String value)
-  {
-    return Command::withValue(resp, value);
   }
 };
 
