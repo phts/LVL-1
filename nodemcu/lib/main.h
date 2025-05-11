@@ -101,18 +101,16 @@ void level(String value)
   url.replace(F("{{value}}"), value);
   debug(url);
   http.begin(client, url);
-  int httpResponseCode = http.POST(F(""));
-  debug(F("Response code"), httpResponseCode);
-
-  if (httpResponseCode < 200 || httpResponseCode > 299)
-  {
-    sendFail(String(F("Response code: ")) + String(httpResponseCode));
-  }
-  else
-  {
-    sendOk();
-  }
+  int code = http.POST(F(""));
   http.end();
+  debug(F("Response code"), code);
+
+  if (code < 200 || code > 299)
+  {
+    sendFail(String(F("Response code: ")) + code);
+    return;
+  }
+  sendOk();
 }
 
 void log(String value)
@@ -137,18 +135,16 @@ void log(String value)
   url.replace(F("{{message}}"), urlEncode(message));
   debug(url);
   http.begin(client, url);
-  int httpResponseCode = http.POST(F(""));
-  debug(F("Response code"), httpResponseCode);
-
-  if (httpResponseCode < 200 || httpResponseCode > 299)
-  {
-    sendFail(String(F("Response code: ")) + String(httpResponseCode));
-  }
-  else
-  {
-    sendOk();
-  }
+  int code = http.POST(F(""));
   http.end();
+  debug(F("Response code"), code);
+
+  if (code < 200 || code > 299)
+  {
+    sendFail(String(F("Response code: ")) + code);
+    return;
+  }
+  sendOk();
 }
 
 void setup()
