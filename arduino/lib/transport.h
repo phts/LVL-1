@@ -170,6 +170,10 @@ private:
       _state = STATE_WAITING;
       _responseTimeoutTimer.restart();
       console.debug(F("Transport"), F(">"), _response);
+      if (*_processingEntry.onResponse)
+      {
+        _processingEntry.onResponse(_response);
+      }
       if (Response::isSuccess(_response))
       {
         finish();
@@ -177,10 +181,6 @@ private:
       else if (Response::isFailure(_response))
       {
         fail(FAILURE_TYPE_RESPONSE, Response::valueOf(_response));
-      }
-      if (*_processingEntry.onResponse)
-      {
-        _processingEntry.onResponse(_response);
       }
       _response = F("");
     }
