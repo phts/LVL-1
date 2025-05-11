@@ -1,6 +1,7 @@
 #ifndef startup_h
 #define startup_h
 
+#include <TimerMs.h>
 #include "settings.h"
 #include "console.h"
 #include "ui.h"
