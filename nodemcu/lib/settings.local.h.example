@@ -8,5 +8,6 @@
 
 #define LEVEL_POST_ENDPOINT F("http://example.com")
 #define LOG_POST_ENDPOINT F("http://example.com")
+#define RC_GET_ENDPOINT F("http://example.com")
 
 #endif

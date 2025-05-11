@@ -6,7 +6,7 @@
 #define SERIAL_PORT 9600
 
 #define CHECK_INITIAL_DELAY 40000
-#define CHECK_INTERVAL 14400000 // 4h
+#define CHECK_INTERVAL 43200000 // 12h
 #define STARTUP_TIMER_INTERVAL 300
 
 #define LEVEL_WARNING 83 // 0--100
@@ -29,6 +29,8 @@
 #define TRANSPORT_TIMEOUT_RESPONSE 60000
 
 #define UI_ERROR_AUTOHIDE_DELAY 60000
+
+#define REMOTE_CONTROL_INTERVAL 600000 // 10 min
 
 #if __has_include("settings.local.h")
 #include "settings.local.h"

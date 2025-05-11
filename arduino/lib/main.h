@@ -14,6 +14,7 @@
 #include "led.h"
 #include "internet.h"
 #include "startup.h"
+#include "remote_control.h"
 
 Button btnCheck(Config::PIN_BTN_CHECK);
 Ultrasonic ultrasonic(Config::PIN_ULTRASONIC_SENSOR_TRIGGER, Config::PIN_ULTRASONIC_SENSOR_ECHO);
@@ -22,6 +23,7 @@ Indicator indicator(&led, Config::PIN_METER);
 UI ui(&indicator, LEVEL_WARNING);
 Internet internet(Config::PIN_MODEM_RX, Config::PIN_MODEM_TX);
 Startup startup(&ui, &internet);
+RemoteControl remoteControl(&internet);
 
 TimerMs checkTimer(CHECK_INITIAL_DELAY);
 
@@ -118,6 +120,22 @@ void transportErrorCallback(String command, byte type, String desc)
   internet.sendLog(F("error"), msg2);
 }
 
+void remoteControlActionCallback(String resp)
+{
+  if (Response::equals(resp, F("id!")))
+  {
+    remoteControl.setNextId(Response::valueOf(resp));
+  }
+  else if (Response::equals(resp, F("action!")))
+  {
+    remoteControl.setNextAction(Response::valueOf(resp));
+  }
+  else if (Response::isSuccess(resp))
+  {
+    remoteControl.saveNext();
+  }
+}
+
 void btnCheckCallback()
 {
   switch (btnCheck.action())
@@ -137,6 +155,7 @@ void setup()
   internet.setup(transportErrorCallback);
   ultrasonic.setup(distanceCallback);
   startup.setup(connectCallback);
+  remoteControl.setup(remoteControlActionCallback);
 }
 
 void loop()
@@ -147,6 +166,16 @@ void loop()
   internet.tick();
   ultrasonic.tick();
   startup.tick();
+  remoteControl.tick();
+  switch (remoteControl.getAction())
+  {
+  case RemoteControl::ACTION_CHECK:
+    remoteControl.markAsProcessed();
+    check();
+    break;
+  default:
+    break;
+  }
 }
 
 #endif

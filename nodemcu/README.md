@@ -16,16 +16,17 @@ softSerial.println("!some_command");
 
 Usually a command looks like: `!<name>` or `!<name>=<params>`. And a response: `<name>!` or `<name>!=<value>`.
 
-| Command                     | `ok!`                | `fail!=<Description...>`                                                      | Description                                                                 |
-| --------------------------- | -------------------- | ----------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| `!connect`                  | When connected       | When failed to connect after `WIFI_STATUS_MAX_RETRIES` retries                | Connect to Wi-Fi. During connection sends responds like `progress!=<value>` |
-| `!disconnect`               | Always               |                                                                               | Disconnect Wi-Fi                                                            |
-| `!level=<value>`            | On 2XX HTTP response | - When not connected<br>- On non-2XX HTTP response                            | Send level value to the website                                             |
-| `!log=<severity>,<message>` | On 2XX HTTP response | - When not connected<br>- On non-2XX HTTP response<br>- On value wrong format | Send log entry to the website                                               |
-| `!healthcheck`              | Always               | -                                                                             | Respond with success at once                                                |
-| `!fail=<desc>`              | -                    | Always                                                                        | Respond with failure at once (for testing)                                  |
-| `!ping=<n>`                 | Always               |                                                                               | Send `pong!=<i>` back `n` times with 10 sec delay                           |
-| Any unknown command         | -                    | Always                                                                        |                                                                             |
+| Command                     | `ok!`                | `fail!=<Description...>`                                                      | Description                                                                                  |
+| --------------------------- | -------------------- | ----------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `!connect`                  | When connected       | When failed to connect after `WIFI_STATUS_MAX_RETRIES` retries                | Connect to Wi-Fi. During connection sends responds like `progress!=<value>`                  |
+| `!disconnect`               | Always               |                                                                               | Disconnect Wi-Fi                                                                             |
+| `!level=<value>`            | On 2XX HTTP response | - When not connected<br>- On non-2XX HTTP response                            | Send level value to the website                                                              |
+| `!log=<severity>,<message>` | On 2XX HTTP response | - When not connected<br>- On non-2XX HTTP response<br>- On value wrong format | Send log entry to the website                                                                |
+| `!rc`                       | On 2XX HTTP response | - When not connected<br>- On non-2XX HTTP response<br>- On value wrong format | Get remote control status. Also sends `id!=<value>` and `action!=<value>` before termination |
+| `!healthcheck`              | Always               | -                                                                             | Respond with success at once                                                                 |
+| `!fail=<desc>`              | -                    | Always                                                                        | Respond with failure at once (for testing)                                                   |
+| `!ping=<n>`                 | Always               |                                                                               | Send `pong!=<i>` back `n` times with 10 sec delay                                            |
+| Any unknown command         | -                    | Always                                                                        |                                                                                              |
 
 ## Development
 

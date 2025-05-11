@@ -147,6 +147,43 @@ void log(String value)
   sendOk();
 }
 
+void rc()
+{
+  if (WiFi.status() != WL_CONNECTED)
+  {
+    sendFail(String(F("Not connected: status=")) + WiFi.status());
+    return;
+  }
+
+  debug(RC_GET_ENDPOINT);
+  http.begin(client, RC_GET_ENDPOINT);
+
+  int code = http.GET();
+  debug(F("Response code"), code);
+  if (code < 200 || code > 299)
+  {
+    sendFail(String(F("Response code: ")) + code);
+    http.end();
+    return;
+  }
+
+  String response = http.getString();
+  http.end();
+  debug(F("Response"), response);
+
+  int divider = response.indexOf('|');
+  if (divider < 0)
+  {
+    sendFail(F("Response wrong format: missing divider"));
+    return;
+  }
+  String id = response.substring(0, divider);
+  String action = response.substring(divider + 1);
+  sendValue(F("id!"), id);
+  sendValue(F("action!"), action);
+  sendOk();
+}
+
 void setup()
 {
   Serial.begin(SERIAL_PORT);
@@ -178,6 +215,10 @@ void loop()
   else if (Command::equals(cmd, F("!log")))
   {
     log(Command::valueOf(cmd));
+  }
+  else if (Command::equals(cmd, F("!rc")))
+  {
+    rc();
   }
   else if (Command::equals(cmd, F("!healthcheck")))
   {

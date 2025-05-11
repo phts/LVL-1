@@ -51,6 +51,11 @@ public:
     _transport.exec(F("!log"), msg, nullptr, _failCallback);
   }
 
+  void getRemoteControl(OnResponseCallback onResponse)
+  {
+    _transport.exec(F("!rc"), onResponse, _failCallback);
+  }
+
 private:
   SoftwareSerial _softSerial;
   Transport _transport;
