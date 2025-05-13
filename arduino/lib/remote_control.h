@@ -10,7 +10,7 @@ class RemoteControl
 {
 public:
   static const byte ACTION_NOTHING = 0;
-  static const byte ACTION_CHECK = 1;
+  static const byte ACTION_MEASURE = 1;
 
   RemoteControl(Internet *internet) : _timer(REMOTE_CONTROL_INTERVAL)
   {
@@ -44,9 +44,9 @@ public:
   void setNextAction(String nextAction)
   {
     console.debug(F("RemoteControl"), F("setNextAction:"), nextAction);
-    if (nextAction == F("check"))
+    if (nextAction == F("measure"))
     {
-      _nextAction = ACTION_CHECK;
+      _nextAction = ACTION_MEASURE;
     }
   }
 

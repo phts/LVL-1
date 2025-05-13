@@ -5,12 +5,12 @@
 #include "../lib/config.h"
 #include "../lib/indicator.h"
 
-Button btnCheck(Config::PIN_BTN_CHECK);
+Button btnMeasure(Config::PIN_BTN_MEASURE);
 Led led(Config::PIN_LED);
 Indicator indicator(&led, Config::PIN_METER);
 int direction = 1;
 
-void check()
+void measure()
 {
   indicator.setLevel(indicator.getLevel() + 1 * direction);
   Serial.println(indicator.getLevel());
@@ -21,24 +21,24 @@ void check()
   }
 }
 
-void btnCheckCallback()
+void btnMeasureCallback()
 {
-  switch (btnCheck.action())
+  switch (btnMeasure.action())
   {
   case EB_PRESS:
-    check();
+    measure();
   }
 }
 
 void setup()
 {
   Serial.begin(SERIAL_PORT);
-  btnCheck.attach(btnCheckCallback);
+  btnMeasure.attach(btnMeasureCallback);
 }
 
 void loop()
 {
-  btnCheck.tick();
+  btnMeasure.tick();
   indicator.tick();
 }
 

@@ -16,7 +16,7 @@
 #include "startup.h"
 #include "remote_control.h"
 
-Button btnCheck(Config::PIN_BTN_CHECK);
+Button btnMeasure(Config::PIN_BTN_MEASURE);
 Ultrasonic ultrasonic(Config::PIN_ULTRASONIC_SENSOR_TRIGGER, Config::PIN_ULTRASONIC_SENSOR_ECHO);
 Led led(Config::PIN_LED);
 Indicator indicator(&led, Config::PIN_METER);
@@ -25,7 +25,7 @@ Internet internet(Config::PIN_MODEM_RX, Config::PIN_MODEM_TX);
 Startup startup(&ui, &internet);
 RemoteControl remoteControl(&internet);
 
-TimerMs checkTimer(CHECK_INITIAL_DELAY);
+TimerMs measureTimer(MEASURE_INITIAL_DELAY);
 
 void connectCallback(String resp)
 {
@@ -40,17 +40,17 @@ void connectCallback(String resp)
   }
 }
 
-void check()
+void measure()
 {
   if (startup.isStarting())
   {
-    String msg = F("Not started yet. Check skipped...");
+    String msg = F("Not started yet. Measure skipped...");
     console.info(msg);
     internet.sendLog(F("warn"), msg);
     return;
   }
-  checkTimer.setTime(CHECK_INTERVAL);
-  checkTimer.start();
+  measureTimer.setTime(MEASURE_INTERVAL);
+  measureTimer.start();
   ultrasonic.requestDistance();
 }
 
@@ -136,22 +136,22 @@ void remoteControlActionCallback(String resp)
   }
 }
 
-void btnCheckCallback()
+void btnMeasureCallback()
 {
-  switch (btnCheck.action())
+  switch (btnMeasure.action())
   {
   case EB_PRESS:
-    check();
+    measure();
   }
 }
 
 void setup()
 {
   Serial.begin(SERIAL_PORT);
-  btnCheck.attach(btnCheckCallback);
+  btnMeasure.attach(btnMeasureCallback);
   ui.setup();
-  checkTimer.attach(check);
-  checkTimer.start();
+  measureTimer.attach(measure);
+  measureTimer.start();
   internet.setup(transportErrorCallback);
   ultrasonic.setup(distanceCallback);
   startup.setup(connectCallback);
@@ -160,18 +160,18 @@ void setup()
 
 void loop()
 {
-  btnCheck.tick();
+  btnMeasure.tick();
   ui.tick();
-  checkTimer.tick();
+  measureTimer.tick();
   internet.tick();
   ultrasonic.tick();
   startup.tick();
   remoteControl.tick();
   switch (remoteControl.getAction())
   {
-  case RemoteControl::ACTION_CHECK:
+  case RemoteControl::ACTION_MEASURE:
     remoteControl.markAsProcessed();
-    check();
+    measure();
     break;
   default:
     break;
