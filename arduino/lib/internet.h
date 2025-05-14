@@ -37,9 +37,9 @@ public:
     _transport.tick();
   }
 
-  void sendLevel(int value)
+  void sendLevel(int value, bool isManual)
   {
-    _transport.exec(F("!level"), String(value), nullptr, _failCallback);
+    _transport.exec(isManual ? F("!levelm") : F("!level"), String(value), nullptr, _failCallback);
   }
 
   void sendLog(const __FlashStringHelper *severity, String message)

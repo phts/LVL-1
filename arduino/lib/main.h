@@ -40,7 +40,7 @@ void connectCallback(String resp)
   }
 }
 
-void measure()
+void measure(bool isManual = false)
 {
   if (startup.isStarting())
   {
@@ -141,7 +141,7 @@ void btnMeasureCallback()
   switch (btnMeasure.action())
   {
   case EB_PRESS:
-    measure();
+    measure(true);
   }
 }
 
@@ -171,7 +171,7 @@ void loop()
   {
   case RemoteControl::ACTION_MEASURE:
     remoteControl.markAsProcessed();
-    measure();
+    measure(true);
     break;
   default:
     break;
