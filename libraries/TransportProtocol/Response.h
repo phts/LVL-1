@@ -24,9 +24,9 @@ public:
   {
     return resp.startsWith(failure());
   }
-  static bool equals(String resp1, String resp2)
+  static bool equals(String str, const __FlashStringHelper *resp)
   {
-    return Command::equals(resp1, resp2);
+    return Command::equals(str, resp);
   }
   static String valueOf(String resp)
   {

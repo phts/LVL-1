@@ -6,9 +6,14 @@ class Command
 public:
   static const char ValueDivider = '=';
 
-  static bool equals(String c1, String c2)
+  static bool equals(String str, const __FlashStringHelper *cmd)
   {
-    return c1.startsWith(c2);
+    int divider = str.indexOf(ValueDivider);
+    if (divider < 0)
+    {
+      return str.equals(cmd);
+    }
+    return str.substring(0, divider).equals(cmd);
   }
 
   static String valueOf(String command)

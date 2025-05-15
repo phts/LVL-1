@@ -42,7 +42,7 @@ void connectCallback(String resp)
   }
 }
 
-void measure(bool manually = false)
+void measure(bool isAuto = true, bool forceAuto = false)
 {
   if (startup.isStarting())
   {
@@ -50,13 +50,18 @@ void measure(bool manually = false)
     return;
   }
   bool requested = ultrasonic.requestDistance();
-  if (requested)
+  if (!requested)
   {
-    _requestedManually = manually;
-    if (!manually)
-    {
-      measureTimer.restart();
-    }
+    return;
+  }
+  _requestedManually = !isAuto && !forceAuto;
+  if (isAuto || forceAuto)
+  {
+    measureTimer.restart();
+  }
+  if (forceAuto)
+  {
+    internet.sendLog(F("info"), F("Measure timer restarted"));
   }
 }
 
@@ -65,7 +70,7 @@ void startedCallback()
   console.debug(F("main"), F("started"));
   measureTimer.start();
   internet.sendLog(F("info"), F("Started"));
-  measure(false);
+  measure(true, false);
 }
 
 void distanceCallback(float distance, float samples[], byte samples_len)
@@ -156,11 +161,11 @@ void btnMeasureCallback()
   switch (btnMeasure.action())
   {
   case EB_CLICK:
-    measure(true);
+    measure(false, false);
     break;
   case EB_HOLD:
     console.debug(F("main"), F("button long press"));
-    measure(false);
+    measure(false, true);
     break;
   }
 }
