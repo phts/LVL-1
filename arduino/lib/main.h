@@ -25,7 +25,9 @@ Internet internet(Config::PIN_MODEM_RX, Config::PIN_MODEM_TX);
 Startup startup(&ui, &internet);
 RemoteControl remoteControl(&internet);
 
-TimerMs measureTimer(MEASURE_INITIAL_DELAY);
+TimerMs measureTimer(MEASURE_INTERVAL);
+
+bool _requestedManually = false;
 
 void connectCallback(String resp)
 {
@@ -40,18 +42,30 @@ void connectCallback(String resp)
   }
 }
 
-void measure(bool isManual = false)
+void measure(bool manually = false)
 {
   if (startup.isStarting())
   {
-    String msg = F("Not started yet. Measure skipped...");
-    console.info(msg);
-    internet.sendLog(F("warn"), msg);
+    console.info(F("Not started yet. Measure skipped..."));
     return;
   }
-  measureTimer.setTime(MEASURE_INTERVAL);
+  bool requested = ultrasonic.requestDistance();
+  if (requested)
+  {
+    _requestedManually = manually;
+    if (!manually)
+    {
+      measureTimer.restart();
+    }
+  }
+}
+
+void startedCallback()
+{
+  console.debug(F("main"), F("started"));
   measureTimer.start();
-  ultrasonic.requestDistance();
+  internet.sendLog(F("info"), F("Started"));
+  measure(false);
 }
 
 void distanceCallback(float distance, float samples[], byte samples_len)
@@ -70,7 +84,8 @@ void distanceCallback(float distance, float samples[], byte samples_len)
   internet.sendLog(F("debug"), String(F("Distance from ultrasonic sensor: ")) + distance);
   int lvl = helpers.distanceToLevel(distance);
   ui.showLevel(lvl);
-  internet.sendLevel(lvl);
+  internet.sendLevel(lvl, _requestedManually);
+  _requestedManually = false;
 }
 
 void transportErrorCallback(String command, byte type, String desc)
@@ -140,8 +155,13 @@ void btnMeasureCallback()
 {
   switch (btnMeasure.action())
   {
-  case EB_PRESS:
+  case EB_CLICK:
     measure(true);
+    break;
+  case EB_HOLD:
+    console.debug(F("main"), F("button long press"));
+    measure(false);
+    break;
   }
 }
 
@@ -151,10 +171,9 @@ void setup()
   btnMeasure.attach(btnMeasureCallback);
   ui.setup();
   measureTimer.attach(measure);
-  measureTimer.start();
   internet.setup(transportErrorCallback);
   ultrasonic.setup(distanceCallback);
-  startup.setup(connectCallback);
+  startup.setup(connectCallback, startedCallback);
   remoteControl.setup(remoteControlActionCallback);
 }
 

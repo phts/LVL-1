@@ -49,12 +49,18 @@ public:
     }
   }
 
-  void requestDistance()
+  bool requestDistance()
   {
+    if (_samplesTimer.active())
+    {
+      console.debug(F("Ultrasonic"), F("already requested, request skipped"));
+      return false;
+    }
     _samplesTimer.restart();
     _samplesGathered = 0;
     _samplesTry = 0;
     console.debug(F("Ultrasonic"), F("request distance"));
+    return true;
   }
 
 private:
