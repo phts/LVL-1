@@ -101,7 +101,10 @@ private:
     }
     _processingEntry = _queue.dequeue();
     console.debug(F("Transport"), F("execQueue: taking next command:"), _processingEntry.command);
-    console.debug(F("Transport"), F("execQueue: with value:"), _processingEntry.value);
+    if (_processingEntry.value.length() > 0)
+    {
+      console.debug(F("Transport"), F("execQueue: with value:"), _processingEntry.value);
+    }
     _state = STATE_WAITING;
     _response = F("");
     _serial->flush();
