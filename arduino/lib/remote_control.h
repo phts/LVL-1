@@ -21,8 +21,8 @@ public:
   {
     _onResponse = cb;
     _timer.start();
-    _currentId.reserve(24);
-    _nextId.reserve(24);
+    _currentId.reserve(14);
+    _nextId.reserve(14);
   }
 
   void tick()
