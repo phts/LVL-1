@@ -67,6 +67,7 @@ void sendFail(String desc)
 void connect()
 {
   WiFi.disconnect();
+  delay(1000);
   byte retry = 0;
   progress = sendProgress(0);
   debug(F("Connecting to"), WIFI_NAME);
