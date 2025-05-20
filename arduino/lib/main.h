@@ -195,6 +195,10 @@ void loop()
     remoteControl.markAsProcessed();
     measure(false);
     break;
+  case RemoteControl::ACTION_MEASURE_AND_RESET_TIMER:
+    remoteControl.markAsProcessed();
+    measure(true);
+    break;
   default:
     break;
   }

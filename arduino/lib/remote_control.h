@@ -11,6 +11,7 @@ class RemoteControl
 public:
   static const byte ACTION_NOTHING = 0;
   static const byte ACTION_MEASURE = 1;
+  static const byte ACTION_MEASURE_AND_RESET_TIMER = 2;
 
   RemoteControl(Internet *internet) : _timer(REMOTE_CONTROL_INTERVAL)
   {
@@ -47,6 +48,10 @@ public:
     if (nextAction == F("measure"))
     {
       _nextAction = ACTION_MEASURE;
+    }
+    else if (nextAction == F("measure+reset"))
+    {
+      _nextAction = ACTION_MEASURE_AND_RESET_TIMER;
     }
   }
 
