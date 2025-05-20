@@ -25,7 +25,7 @@ Internet internet(Config::PIN_MODEM_RX, Config::PIN_MODEM_TX);
 Startup startup(&ui, &internet);
 RemoteControl remoteControl(&internet);
 
-TimerMs measureTimer(MEASURE_INITIAL_DELAY);
+TimerMs measureTimer(MEASURE_INTERVAL);
 
 void connectCallback(String resp)
 {
@@ -52,6 +52,14 @@ void measure()
   measureTimer.setTime(MEASURE_INTERVAL);
   measureTimer.start();
   ultrasonic.requestDistance();
+}
+
+void startedCallback()
+{
+  console.debug(F("main"), F("started"));
+  measureTimer.start();
+  internet.sendLog(F("info"), F("Started"));
+  measure();
 }
 
 void distanceCallback(float distance, float samples[], byte samples_len)
@@ -151,10 +159,9 @@ void setup()
   btnMeasure.attach(btnMeasureCallback);
   ui.setup();
   measureTimer.attach(measure);
-  measureTimer.start();
   internet.setup(transportErrorCallback);
   ultrasonic.setup(distanceCallback);
-  startup.setup(connectCallback);
+  startup.setup(connectCallback, startedCallback);
   remoteControl.setup(remoteControlActionCallback);
 }
 

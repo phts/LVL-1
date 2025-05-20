@@ -7,6 +7,8 @@
 #include "ui.h"
 #include "internet.h"
 
+typedef void (*OnStartedCallback)();
+
 class Startup
 {
 public:
@@ -16,12 +18,12 @@ public:
     _internet = internet;
   }
 
-  void setup(OnResponseCallback connectCallback)
+  void setup(OnResponseCallback connectCallback, OnStartedCallback startedCallback)
   {
     console.info(F("PHTS LVL-1"));
     console.info(F("Staring up..."));
-    _starting = true;
     _connectCallback = connectCallback;
+    _startedCallback = startedCallback;
     _ui->showProgressBar();
     _startupTimer.start();
   }
@@ -43,14 +45,13 @@ public:
     if (_ui->getProgress() == 100)
     {
       _startupTimer.stop();
-      _internet->sendLog(F("info"), F("Started"));
-      _starting = false;
+      _startedCallback();
     }
   }
 
   bool isStarting()
   {
-    return _starting;
+    return _startupTimer.active();
   }
 
   void setMaxProgress(byte value)
@@ -63,7 +64,7 @@ private:
   Internet *_internet;
   TimerMs _startupTimer;
   OnResponseCallback _connectCallback;
-  bool _starting;
+  OnStartedCallback _startedCallback;
   byte _maxProgress = 90;
 };
 
