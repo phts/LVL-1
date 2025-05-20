@@ -90,7 +90,7 @@ void connect()
   sendOk();
 }
 
-void level(String value)
+void level(String value, bool isManual = false)
 {
   if (WiFi.status() != WL_CONNECTED)
   {
@@ -100,6 +100,7 @@ void level(String value)
 
   String url = String(LEVEL_POST_ENDPOINT);
   url.replace(F("{{value}}"), value);
+  url.replace(F("{{mode}}"), isManual ? F("manual") : F("auto"));
   debug(url);
   http.begin(client, url);
   int code = http.POST(F(""));
@@ -212,6 +213,10 @@ void loop()
   else if (Command::equals(cmd, F("!level")))
   {
     level(Command::valueOf(cmd));
+  }
+  else if (Command::equals(cmd, F("!levelm")))
+  {
+    level(Command::valueOf(cmd), true);
   }
   else if (Command::equals(cmd, F("!log")))
   {

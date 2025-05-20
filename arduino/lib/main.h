@@ -40,18 +40,26 @@ void connectCallback(String resp)
   }
 }
 
-void measure()
+void measure(bool restartTimer = false, bool isAuto = false)
 {
   if (startup.isStarting())
   {
-    String msg = F("Not started yet. Measure skipped...");
-    console.info(msg);
-    internet.sendLog(F("warn"), msg);
+    console.info(F("Not started yet. Measure skipped..."));
     return;
   }
-  measureTimer.setTime(MEASURE_INTERVAL);
-  measureTimer.start();
-  ultrasonic.requestDistance();
+  bool requested = ultrasonic.requestDistance(!isAuto && !restartTimer);
+  if (!requested)
+  {
+    return;
+  }
+  if (restartTimer)
+  {
+    measureTimer.restart();
+  }
+  if (restartTimer && !isAuto)
+  {
+    internet.sendLog(F("info"), F("Measure timer restarted"));
+  }
 }
 
 void startedCallback()
@@ -59,10 +67,10 @@ void startedCallback()
   console.debug(F("main"), F("started"));
   measureTimer.start();
   internet.sendLog(F("info"), F("Started"));
-  measure();
+  measure(true, true);
 }
 
-void distanceCallback(float distance, float samples[], byte samples_len)
+void distanceCallback(float distance, bool mode, float samples[], byte samples_len)
 {
   String msg;
   msg.concat(F("Ultrasonic samples: "));
@@ -78,7 +86,7 @@ void distanceCallback(float distance, float samples[], byte samples_len)
   internet.sendLog(F("debug"), String(F("Distance from ultrasonic sensor: ")) + distance);
   int lvl = helpers.distanceToLevel(distance);
   ui.showLevel(lvl);
-  internet.sendLevel(lvl);
+  internet.sendLevel(lvl, mode);
 }
 
 void transportErrorCallback(String command, byte type, String desc)
@@ -148,8 +156,13 @@ void btnMeasureCallback()
 {
   switch (btnMeasure.action())
   {
-  case EB_PRESS:
-    measure();
+  case EB_CLICK:
+    measure(false);
+    break;
+  case EB_HOLD:
+    console.debug(F("main"), F("button long press"));
+    measure(true);
+    break;
   }
 }
 
@@ -158,7 +171,6 @@ void setup()
   Serial.begin(SERIAL_PORT);
   btnMeasure.attach(btnMeasureCallback);
   ui.setup();
-  measureTimer.attach(measure);
   internet.setup(transportErrorCallback);
   ultrasonic.setup(distanceCallback);
   startup.setup(connectCallback, startedCallback);
@@ -169,7 +181,10 @@ void loop()
 {
   btnMeasure.tick();
   ui.tick();
-  measureTimer.tick();
+  if (measureTimer.tick())
+  {
+    measure(true, true);
+  }
   internet.tick();
   ultrasonic.tick();
   startup.tick();
@@ -178,7 +193,7 @@ void loop()
   {
   case RemoteControl::ACTION_MEASURE:
     remoteControl.markAsProcessed();
-    measure();
+    measure(false);
     break;
   default:
     break;

@@ -7,7 +7,7 @@
 #include "utils.h"
 #include "console.h"
 
-typedef void (*OnDistanceCallback)(float distance, float samples[], byte samples_len);
+typedef void (*OnDistanceCallback)(float distance, bool mode, float samples[], byte samples_len);
 
 class Ultrasonic
 {
@@ -49,12 +49,19 @@ public:
     }
   }
 
-  void requestDistance()
+  bool requestDistance(bool mode)
   {
+    if (_samplesTimer.active())
+    {
+      console.debug(F("Ultrasonic"), F("already requested, request skipped"));
+      return false;
+    }
     _samplesTimer.restart();
     _samplesGathered = 0;
     _samplesTry = 0;
+    _mode = mode;
     console.debug(F("Ultrasonic"), F("request distance"));
+    return true;
   }
 
 private:
@@ -64,13 +71,14 @@ private:
   byte _samplesGathered = 0;
   float _samples[ULTRASONIC_MAX_SAMPLES];
   byte _samplesTry = 0;
+  bool _mode;
 
   void handleDistance(float samples[], byte samples_len)
   {
     if (samples_len < ULTRASONIC_MAX_SAMPLES)
     {
       console.debug(F("Ultrasonic"), F("distance:"), -1);
-      _onDistanceCallback(-1, samples, samples_len);
+      _onDistanceCallback(-1, _mode, samples, samples_len);
       return;
     }
 
@@ -82,7 +90,7 @@ private:
     float res = utils.average(middleSamples, s);
     delete[] middleSamples;
     console.debug(F("Ultrasonic"), F("distance:"), res);
-    _onDistanceCallback(res, samples, samples_len);
+    _onDistanceCallback(res, _mode, samples, samples_len);
   }
 };
 
