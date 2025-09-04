@@ -63,12 +63,17 @@ public:
     showCachedLevel();
   }
 
+  void showBusy()
+  {
+    _indicator->setLed(Indicator::LED_BUSY);
+  }
+
   void showProgressBar()
   {
     console.debug(F("UI"), F("show progress bar"));
+    showBusy();
     _progress = 0;
     _indicator->setLevel(0);
-    _indicator->setLed(Indicator::LED_INFO);
   }
 
   void hideProgressBar()

@@ -12,7 +12,7 @@ public:
   static const byte LED_OFF = 0;
   static const byte LED_WARNING = 1;
   static const byte LED_ERROR = 2;
-  static const byte LED_INFO = 3;
+  static const byte LED_BUSY = 3;
 
   Indicator(Led *led, byte pinMeter)
   {
@@ -57,6 +57,7 @@ public:
   {
     console.debug(F("Indicator"), F("LED:"), type);
     _ledBlinkTimer.stop();
+    _ledImpulseTimer.stop();
     switch (type)
     {
     case LED_OFF:
@@ -70,10 +71,11 @@ public:
       _ledBlinkTimer.setTime(INDICATOR_LED_ERROR_BLINK_INTERVAL);
       _ledBlinkTimer.start();
       break;
-    case LED_INFO:
-      _ledImpulseTimer.setTime(INDICATOR_LED_INFO_IMPULSE_INTERVAL);
-      _ledBlinkTimer.setTime(INDICATOR_LED_INFO_BLINK_INTERVAL);
+    case LED_BUSY:
+      _ledImpulseTimer.setTime(INDICATOR_LED_BUSY_IMPULSE_INTERVAL);
+      _ledBlinkTimer.setTime(INDICATOR_LED_BUSY_BLINK_INTERVAL);
       _ledBlinkTimer.start();
+      _ledBlinkTimer.force();
       break;
     default:
       break;

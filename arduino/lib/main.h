@@ -52,6 +52,7 @@ void measure(bool restartTimer = false, bool isAuto = false)
   {
     return;
   }
+  ui.showBusy();
   if (restartTimer)
   {
     measureTimer.restart();
