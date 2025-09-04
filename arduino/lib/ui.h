@@ -8,6 +8,7 @@
 class UI
 {
 public:
+  static const byte ERROR_CODE_NONE = 0;
   static const byte ERROR_CODE_SENSOR = 1;
   static const byte ERROR_CODE_TRANSPORT = 2;
   static const byte ERROR_CODE_WIFI = 3;
@@ -30,7 +31,7 @@ public:
     _indicator->tick();
     if (_autohideErrorTimer.tick())
     {
-      hideError();
+      hideTempError();
     }
   }
 
@@ -38,30 +39,28 @@ public:
   {
     _level = value;
     console.debug(F("UI"), F("show level:"), value);
-    bool warning = value >= _warningLevel;
-    _indicator->setLevel(value);
-    _indicator->setLed(warning ? Indicator::LED_WARNING : Indicator::LED_OFF);
+    showCachedLevel();
   }
 
-  void showError(byte code)
-  {
-    showError(code, false);
-  }
-  void showError(byte code, bool autohide)
+  void showError(byte code, bool autohide = false)
   {
     console.debug(F("UI"), F("show error:"), String(F("code=")) + code + String(F(" autohide=")) + autohide);
-    _indicator->setLevel(100 / ERRORS_SIZE * code);
-    _indicator->setLed(Indicator::LED_ERROR);
+    showErrorCode(code);
     if (autohide)
     {
       _autohideErrorTimer.restart();
+    }
+    else
+    {
+      _cachedError = code;
     }
   }
 
   void hideError()
   {
     console.debug(F("UI"), F("hide error"));
-    showLevel(_level);
+    _cachedError = ERROR_CODE_NONE;
+    showCachedLevel();
   }
 
   void showProgressBar()
@@ -96,8 +95,33 @@ private:
   Indicator *_indicator;
   byte _warningLevel;
   byte _level = 0;
+  byte _cachedError = ERROR_CODE_NONE;
   TimerMs _autohideErrorTimer;
   byte _progress = 0;
+
+  void showCachedLevel()
+  {
+    bool warning = _level >= _warningLevel;
+    _indicator->setLevel(_level);
+    _indicator->setLed(warning ? Indicator::LED_WARNING : Indicator::LED_OFF);
+  }
+
+  void showErrorCode(byte code)
+  {
+
+    _indicator->setLevel(100 / ERRORS_SIZE * code);
+    _indicator->setLed(Indicator::LED_ERROR);
+  }
+
+  void showCachedError()
+  {
+    showErrorCode(_cachedError);
+  }
+
+  void hideTempError()
+  {
+    _cachedError == ERROR_CODE_NONE ? hideError() : showCachedError();
+  }
 };
 
 #endif
