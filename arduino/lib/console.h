@@ -46,7 +46,7 @@ public:
     Serial.print(F(" "));
     Serial.println(value);
   }
-  void debug(const __FlashStringHelper *scope, const __FlashStringHelper *label, float value)
+  void debug(const __FlashStringHelper *scope, const __FlashStringHelper *label, double value)
   {
     Serial.print(scope);
     Serial.print(F(":: "));
@@ -54,7 +54,7 @@ public:
     Serial.print(F(" "));
     Serial.println(value);
   }
-  void debug(const __FlashStringHelper *scope, const __FlashStringHelper *label, float array[], int len)
+  void debug(const __FlashStringHelper *scope, const __FlashStringHelper *label, double array[], int len)
   {
     Serial.print(scope);
     Serial.print(F(":: "));
@@ -80,10 +80,10 @@ public:
   void debug(const __FlashStringHelper *scope, const __FlashStringHelper *label, int value)
   {
   }
-  void debug(const __FlashStringHelper *scope, const __FlashStringHelper *label, float value)
+  void debug(const __FlashStringHelper *scope, const __FlashStringHelper *label, double value)
   {
   }
-  void debug(const __FlashStringHelper *scope, const __FlashStringHelper *label, float array[], int len)
+  void debug(const __FlashStringHelper *scope, const __FlashStringHelper *label, double array[], int len)
   {
   }
 #endif

@@ -6,12 +6,12 @@
 class Helpers
 {
 public:
-  int distanceToLevel(float distance)
+  int distanceToLevel(double distance)
   {
     return constrain(map(distance, DISTANCE_FOR_EMPTY, DISTANCE_FOR_FULL, 0, 100), 0, 100);
   }
 
-  String arrayToString(float array[], byte len)
+  String arrayToString(double array[], byte len)
   {
     String str;
     for (byte i = 0; i < len; i++)

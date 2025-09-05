@@ -7,18 +7,21 @@
 #include "utils.h"
 #include "console.h"
 
-typedef void (*OnDistanceCallback)(float distance, bool mode, float samples[], byte samples_len);
+typedef void (*OnDistanceCallback)(double distance, bool mode, double samples[], byte samples_len);
 
 class Ultrasonic
 {
 public:
-  Ultrasonic(byte pinTrigger, byte pinEcho) : _sensor(pinTrigger, pinEcho), _samplesTimer(ULTRASONIC_SAMPLES_INTERVAL)
+  Ultrasonic(byte pinTrigger, byte pinEcho) : _samplesTimer(ULTRASONIC_SAMPLES_INTERVAL)
   {
+    _pinTrigger = pinTrigger;
+    _pinEcho = pinEcho;
   }
 
   void setup(OnDistanceCallback cb)
   {
     _onDistanceCallback = cb;
+    HCSR04.begin(_pinTrigger, _pinEcho);
   }
 
   void tick()
@@ -34,7 +37,8 @@ public:
       _samplesTimer.stop();
       handleDistance(_samples, _samplesGathered);
     }
-    float distance = _sensor.measureDistanceCm();
+    double *distances = HCSR04.measureDistanceCm();
+    double distance = distances[0];
     console.debug(F("Ultrasonic"), F("sample="), distance);
     if (distance < 0)
     {
@@ -65,15 +69,16 @@ public:
   }
 
 private:
-  UltraSonicDistanceSensor _sensor;
+  byte _pinTrigger;
+  byte _pinEcho;
   TimerMs _samplesTimer;
   OnDistanceCallback _onDistanceCallback = nullptr;
   byte _samplesGathered = 0;
-  float _samples[ULTRASONIC_MAX_SAMPLES];
+  double _samples[ULTRASONIC_MAX_SAMPLES];
   byte _samplesTry = 0;
   bool _mode;
 
-  void handleDistance(float samples[], byte samples_len)
+  void handleDistance(double samples[], byte samples_len)
   {
     if (samples_len < ULTRASONIC_MAX_SAMPLES)
     {
@@ -84,10 +89,10 @@ private:
 
     console.debug(F("Ultrasonic"), F("samples:"), samples, samples_len);
     utils.sort(samples, samples_len);
-    float *middleSamples = utils.subarray(samples, ULTRASONIC_TRIM_SAMPLES, samples_len - ULTRASONIC_TRIM_SAMPLES);
+    double *middleSamples = utils.subarray(samples, ULTRASONIC_TRIM_SAMPLES, samples_len - ULTRASONIC_TRIM_SAMPLES);
     int s = samples_len - ULTRASONIC_TRIM_SAMPLES * 2;
     console.debug(F("Ultrasonic"), F("middle samples:"), middleSamples, s);
-    float res = utils.average(middleSamples, s);
+    double res = utils.average(middleSamples, s);
     delete[] middleSamples;
     console.debug(F("Ultrasonic"), F("distance:"), res);
     _onDistanceCallback(res, _mode, samples, samples_len);

@@ -71,7 +71,7 @@ void startedCallback()
   measure(true, true);
 }
 
-void distanceCallback(float distance, bool mode, float samples[], byte samples_len)
+void distanceCallback(double distance, bool mode, double samples[], byte samples_len)
 {
   String msg;
   msg.concat(F("Ultrasonic samples: "));
