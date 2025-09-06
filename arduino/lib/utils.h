@@ -4,9 +4,9 @@
 class Utils
 {
 public:
-  float average(float arr[], byte len)
+  unsigned long average(unsigned long arr[], byte len)
   {
-    float sum = 0;
+    unsigned long sum = 0;
     for (int i = 0; i < len; i++)
     {
       sum = sum + arr[i];
@@ -14,9 +14,9 @@ public:
     return sum / len;
   }
 
-  void sort(float arr[], int len)
+  void sort(unsigned long arr[], int len)
   {
-    float tmp;
+    unsigned long tmp;
     for (int i = 0; i < len; i++)
     {
       for (int j = i + 1; j < len; j++)
@@ -31,11 +31,11 @@ public:
     }
   }
 
-  float *subarray(float arr[], int from, int to)
+  unsigned long *subarray(unsigned long arr[], int from, int to)
   {
     int len = to - from;
-    float *newArr = new float[len];
-    memcpy(newArr, &arr[from], len * sizeof(float));
+    unsigned long *newArr = new unsigned long[len];
+    memcpy(newArr, &arr[from], len * sizeof(unsigned long));
     return newArr;
   }
 };

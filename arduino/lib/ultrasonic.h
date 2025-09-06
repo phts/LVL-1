@@ -1,19 +1,19 @@
 #ifndef ultrasonic_h
 #define ultrasonic_h
 
-#include <HCSR04.h>
+#include <NewPing.h>
 #include <TimerMs.h>
 #include "settings.h"
 #include "utils.h"
 #include "console.h"
 
-typedef float DistanceType;
+typedef unsigned long DistanceType;
 typedef void (*OnDistanceCallback)(DistanceType distance, bool mode, DistanceType samples[], byte samples_len);
 
 class Ultrasonic
 {
 public:
-  static const DistanceType FAILED_DISTANCE = -1;
+  static const DistanceType FAILED_DISTANCE = 0;
   static bool isFailed(DistanceType distance)
   {
     return distance == FAILED_DISTANCE;
@@ -41,7 +41,7 @@ public:
       _samplesTimer.stop();
       handleDistance(_samples, _samplesGathered);
     }
-    DistanceType distance = _sensor.measureDistanceCm();
+    DistanceType distance = _sensor.ping_cm();
     console.debug(F("Ultrasonic"), F("sample="), distance);
     if (isFailed(distance))
     {
@@ -72,7 +72,7 @@ public:
   }
 
 private:
-  UltraSonicDistanceSensor _sensor;
+  NewPing _sensor;
   TimerMs _samplesTimer;
   OnDistanceCallback _onDistanceCallback = nullptr;
   byte _samplesGathered = 0;
