@@ -82,8 +82,8 @@ private:
       return;
     }
 
-    utils.sort(samples, samples_len);
     console.debug(F("Ultrasonic"), F("samples:"), samples, samples_len);
+    utils.sort(samples, samples_len);
     float *middleSamples = utils.subarray(samples, ULTRASONIC_TRIM_SAMPLES, samples_len - ULTRASONIC_TRIM_SAMPLES);
     int s = samples_len - ULTRASONIC_TRIM_SAMPLES * 2;
     console.debug(F("Ultrasonic"), F("middle samples:"), middleSamples, s);
