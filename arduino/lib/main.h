@@ -71,13 +71,13 @@ void startedCallback()
   measure(true, true);
 }
 
-void distanceCallback(float distance, bool mode, float samples[], byte samples_len)
+void distanceCallback(DistanceType distance, bool mode, DistanceType samples[], byte samples_len)
 {
   String msg;
   msg.concat(F("Ultrasonic samples: "));
   msg.concat(helpers.arrayToString(samples, samples_len));
   internet.sendLog(F("debug"), msg);
-  if (distance < 0)
+  if (Ultrasonic::isFailed(distance))
   {
     ui.showError(UI::ERROR_CODE_SENSOR);
     console.info(F("Failed to read ultrasonic sensor"));
