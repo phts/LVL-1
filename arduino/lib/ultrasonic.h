@@ -7,11 +7,17 @@
 #include "utils.h"
 #include "console.h"
 
-typedef void (*OnDistanceCallback)(float distance, bool mode, float samples[], byte samples_len);
+typedef float Distance;
+typedef void (*OnDistanceCallback)(bool success, Distance distance, bool mode, Distance samples[], byte samples_len);
 
 class Ultrasonic
 {
 public:
+  static bool isFailed(Distance distance)
+  {
+    return distance < 0;
+  }
+
   Ultrasonic(byte pinTrigger, byte pinEcho) : _sensor(pinTrigger, pinEcho), _samplesTimer(ULTRASONIC_SAMPLES_INTERVAL)
   {
   }
@@ -34,9 +40,9 @@ public:
       _samplesTimer.stop();
       handleDistance(_samples, _samplesGathered);
     }
-    float distance = _sensor.measureDistanceCm();
+    Distance distance = _sensor.measureDistanceCm();
     console.debug(F("Ultrasonic"), F("sample="), distance);
-    if (distance < 0)
+    if (isFailed(distance))
     {
       return;
     }
@@ -69,28 +75,27 @@ private:
   TimerMs _samplesTimer;
   OnDistanceCallback _onDistanceCallback = nullptr;
   byte _samplesGathered = 0;
-  float _samples[ULTRASONIC_MAX_SAMPLES];
+  Distance _samples[ULTRASONIC_MAX_SAMPLES];
   byte _samplesTry = 0;
   bool _mode;
 
-  void handleDistance(float samples[], byte samples_len)
+  void handleDistance(Distance samples[], byte samples_len)
   {
     if (samples_len < ULTRASONIC_MAX_SAMPLES)
     {
-      console.debug(F("Ultrasonic"), F("distance:"), -1);
-      _onDistanceCallback(-1, _mode, samples, samples_len);
+      _onDistanceCallback(false, 0, _mode, samples, samples_len);
       return;
     }
 
     console.debug(F("Ultrasonic"), F("samples:"), samples, samples_len);
     utils.sort(samples, samples_len);
-    float *middleSamples = utils.subarray(samples, ULTRASONIC_TRIM_SAMPLES, samples_len - ULTRASONIC_TRIM_SAMPLES);
+    Distance *middleSamples = utils.subarray(samples, ULTRASONIC_TRIM_SAMPLES, samples_len - ULTRASONIC_TRIM_SAMPLES);
     int s = samples_len - ULTRASONIC_TRIM_SAMPLES * 2;
     console.debug(F("Ultrasonic"), F("middle samples:"), middleSamples, s);
-    float res = utils.average(middleSamples, s);
+    Distance res = utils.average(middleSamples, s);
     delete[] middleSamples;
     console.debug(F("Ultrasonic"), F("distance:"), res);
-    _onDistanceCallback(res, _mode, samples, samples_len);
+    _onDistanceCallback(true, res, _mode, samples, samples_len);
   }
 };
 
