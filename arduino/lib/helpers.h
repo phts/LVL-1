@@ -13,12 +13,37 @@ public:
 
   String arrayToString(float array[], byte len)
   {
-    String str;
+    if (len == 0)
+    {
+      return F("");
+    }
+    byte digits1 = 0;
+    byte digits2 = 0;
+    byte digits3 = 0;
     for (byte i = 0; i < len; i++)
     {
-      str.concat(array[i]);
-      str.concat(F(", "));
+      if (array[i] < 10)
+      {
+        digits1++;
+      }
+      else if (array[i] < 100)
+      {
+        digits2++;
+      }
+      else
+      {
+        digits3++;
+      }
     }
+
+    String str;
+    str.reserve(5 * digits1 + 6 * digits2 + 7 * digits3 - 1); // 1.34,12.45,123.56
+    for (byte i = 0; i < len - 1; i++)
+    {
+      str.concat(array[i]);
+      str.concat(F(","));
+    }
+    str.concat(array[len - 1]);
     return str;
   }
 };

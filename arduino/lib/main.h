@@ -73,10 +73,7 @@ void startedCallback()
 
 void distanceCallback(bool success, Distance distance, bool mode, Distance samples[], byte samples_len)
 {
-  String msg;
-  msg.concat(F("Ultrasonic samples: "));
-  msg.concat(helpers.arrayToString(samples, samples_len));
-  internet.sendLog(F("debug"), msg);
+  internet.sendLog(F("debug"), helpers.arrayToString(samples, samples_len));
   if (!success)
   {
     ui.showError(UI::ERROR_CODE_SENSOR);
