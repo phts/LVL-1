@@ -34,19 +34,11 @@ public:
     _response.reserve(100);
   }
 
-  void exec(const __FlashStringHelper *command)
-  {
-    exec(command, F(""), nullptr, nullptr);
-  }
-  void exec(const __FlashStringHelper *command, OnResponseCallback onResponse)
-  {
-    exec(command, F(""), onResponse, nullptr);
-  }
-  void exec(const __FlashStringHelper *command, OnResponseCallback onResponse, OnFailureCallback onFailure)
+  void exec(const __FlashStringHelper *command, OnResponseCallback onResponse = nullptr, OnFailureCallback onFailure = nullptr)
   {
     exec(command, F(""), onResponse, onFailure);
   }
-  void exec(const __FlashStringHelper *command, String value, OnResponseCallback onResponse, OnFailureCallback onFailure)
+  void exec(const __FlashStringHelper *command, String value, OnResponseCallback onResponse = nullptr, OnFailureCallback onFailure = nullptr)
   {
     console.debug(F("Transport"), F("exec:"), command);
     if (value.length() > 0)
