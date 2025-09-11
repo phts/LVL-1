@@ -43,11 +43,12 @@ public:
       handleDistance(_samples, _samplesGathered);
     }
     Distance distance = _sensor.measureDistanceCm();
-    console.debug(F("Ultrasonic"), F("sample="), distance);
     if (isFailed(distance))
     {
+      console.debug(F("Ultrasonic"), F("[skip] sample="), distance);
       return;
     }
+    console.debug(F("Ultrasonic"), F("sample="), distance);
     _samples[_samplesGathered] = distance;
     _samplesGathered++;
     if (_samplesGathered >= ULTRASONIC_MAX_SAMPLES)
