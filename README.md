@@ -8,6 +8,7 @@ Features:
 - Show level on the big fancy indicator
 - Send levels and logs to [szambo.tsaryk.com] via Wi-Fi
 - 24/7 monitoring
+- Remote control via internet
 
 ## Firmware
 
@@ -31,12 +32,12 @@ Hosted on: [OSHWLab/phts/lvl-1](https://oshwlab.com/phts/lvl-1).
 
 ### Indication
 
-| State       | LED                               | Meter                            | Description                                                          |
-| ----------- | --------------------------------- | -------------------------------- | -------------------------------------------------------------------- |
-| Starting up | `*______*______` (slow blinking)  | Progress bar (number on `%` bar) | The device is starting up                                            |
-| Normal      | `______________` (constantly off) | Actual level                     | Normally operational device                                          |
-| Warning     | `**************` (constantly on)  | Actual level                     | Level is reaching the maximum                                        |
-| Failure     | `*_*_*_*_*_*_*_` (fast blinking)  | Error code (number on `m³` bar)  | Operation failure. See the error code description in the table below |
+| State   | LED                                | Meter                                                               | Description                                                          |
+| ------- | ---------------------------------- | ------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| Normal  | `______________` (constantly off)  | Actual level                                                        | Normally operational device                                          |
+| Warning | `**************` (constantly on)   | Actual level                                                        | Level is reaching the maximum                                        |
+| Busy    | `*______*______` (slowly blinking) | - Starting up: progress bar (number on `%` bar)<br>- Busy: not used | The device is starting up or performing an action                    |
+| Failure | `*_*_*_*_*_*_*_` (fast blinking)   | Error code (number on `m³` bar)                                     | Operation failure. See the error code description in the table below |
 
 #### Errors
 
@@ -48,4 +49,4 @@ Hosted on: [OSHWLab/phts/lvl-1](https://oshwlab.com/phts/lvl-1).
 | 4    | Temporary | Unexpected HTTP response             |
 
 - `Fatal` &mdash; will be indicated constantly until the failure is gone
-- `Temporary` &mdash; will be hidden after 1 minute and back to a normal state
+- `Temporary` &mdash; will be hidden after 1 minute and back to the previous state
