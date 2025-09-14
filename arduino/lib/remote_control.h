@@ -74,9 +74,7 @@ public:
     {
       console.debug(F("RemoteControl"), F("new ID saved:"), _nextId);
       String msg;
-      msg.concat(F("Processing remote action: "));
-      msg.concat(_nextAction);
-      msg.concat(F(", id="));
+      msg.concat(F("Processing remote action: id="));
       msg.concat(_nextId);
       _internet->sendLog(F("info"), msg);
       _currentAction = _nextAction;
