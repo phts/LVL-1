@@ -15,9 +15,7 @@ class Ultrasonic
 public:
   static bool isFailed(Distance distance)
   {
-    return distance < 5 ||
-           distance > DISTANCE_FOR_EMPTY ||
-           (distance > 60 && distance < 67); // random wall
+    return distance < 5 || distance > DISTANCE_FOR_EMPTY;
   }
 
   Ultrasonic(byte pinTrigger, byte pinEcho) : _sensor(pinTrigger, pinEcho), _samplesTimer(ULTRASONIC_SAMPLES_INTERVAL)
