@@ -59,6 +59,18 @@ public:
     arg.concat(message);
     sendLog(arg);
   }
+  void sendLog(const __FlashStringHelper *severity, const __FlashStringHelper *m1, String m2, const __FlashStringHelper *m3, byte value)
+  {
+    String arg;
+    arg.reserve(100);
+    arg.concat(severity);
+    arg.concat(F(","));
+    arg.concat(m1);
+    arg.concat(m2);
+    arg.concat(m3);
+    arg.concat(value);
+    sendLog(arg);
+  }
   void sendLog(const __FlashStringHelper *severity, const __FlashStringHelper *message, float value)
   {
     String arg;

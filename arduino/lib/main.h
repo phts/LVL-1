@@ -72,9 +72,9 @@ void startedCallback()
   measure(true, true);
 }
 
-void distanceCallback(bool success, Distance distance, Mode mode, Distance samples[], byte samples_len)
+void distanceCallback(bool success, Distance distance, Mode mode, Distance samples[], byte samples_len, byte iterations)
 {
-  internet.sendLog(F("debug"), helpers.arrayToString(samples, samples_len));
+  internet.sendLog(F("debug"), F("Samples: "), helpers.arrayToString(samples, samples_len), F("\nIterations: "), iterations);
   if (!success)
   {
     ui.showError(UI::ERROR_CODE_SENSOR);

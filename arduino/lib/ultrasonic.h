@@ -9,7 +9,7 @@
 #include "console.h"
 
 typedef float Distance;
-typedef void (*OnDistanceCallback)(bool success, Distance distance, Mode mode, Distance samples[], byte samples_len);
+typedef void (*OnDistanceCallback)(bool success, Distance distance, Mode mode, Distance samples[], byte samples_len, byte iterations);
 
 class Ultrasonic
 {
@@ -35,8 +35,8 @@ public:
       return;
     }
 
-    _samplesTry++;
-    if (_samplesTry >= ULTRASONIC_MAX_TRIES)
+    _iteration++;
+    if (_iteration >= ULTRASONIC_MAX_TRIES)
     {
       _samplesTimer.stop();
       handleDistance(_samples, _samplesGathered);
@@ -66,7 +66,7 @@ public:
     }
     _samplesTimer.restart();
     _samplesGathered = 0;
-    _samplesTry = 0;
+    _iteration = 0;
     _mode = mode;
     console.debug(F("Ultrasonic"), F("request distance"));
     return true;
@@ -78,17 +78,18 @@ private:
   OnDistanceCallback _onDistanceCallback = nullptr;
   byte _samplesGathered = 0;
   Distance _samples[ULTRASONIC_MAX_SAMPLES];
-  byte _samplesTry = 0;
+  byte _iteration = 0;
   Mode _mode;
 
   void handleDistance(Distance samples[], byte samples_len)
   {
     if (samples_len < ULTRASONIC_MAX_SAMPLES)
     {
-      _onDistanceCallback(false, 0, _mode, samples, samples_len);
+      _onDistanceCallback(false, 0, _mode, samples, samples_len, _iteration);
       return;
     }
 
+    console.debug(F("Ultrasonic"), F("iterations:"), _iteration);
     console.debug(F("Ultrasonic"), F("samples:"), samples, samples_len);
     utils.sort(samples, samples_len);
     Distance *middleSamples = utils.subarray(samples, ULTRASONIC_TRIM_SAMPLES, samples_len - ULTRASONIC_TRIM_SAMPLES);
@@ -97,7 +98,7 @@ private:
     Distance res = utils.average(middleSamples, s);
     delete[] middleSamples;
     console.debug(F("Ultrasonic"), F("distance:"), res);
-    _onDistanceCallback(true, res, _mode, samples, samples_len);
+    _onDistanceCallback(true, res, _mode, samples, samples_len, _iteration);
   }
 };
 
