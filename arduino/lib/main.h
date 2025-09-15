@@ -82,7 +82,7 @@ void distanceCallback(bool success, Distance distance, Mode mode, Distance sampl
     internet.sendLog(F("fatal"), F("Failed to read ultrasonic sensor"));
     return;
   }
-  internet.sendLog(F("debug"), String(F("Distance from ultrasonic sensor: ")) + distance);
+  internet.sendLog(F("debug"), F("Distance from ultrasonic sensor: "), distance);
   int lvl = helpers.distanceToLevel(distance);
   ui.showLevel(lvl);
   internet.sendLevel(lvl, mode);

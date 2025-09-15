@@ -43,13 +43,30 @@ public:
     _transport.exec(mode == MODE_MANUAL ? F("!levelm") : F("!level"), String(value), nullptr, _failCallback);
   }
 
+  void sendLog(const __FlashStringHelper *severity, const __FlashStringHelper *message)
+  {
+    String arg;
+    arg.concat(severity);
+    arg.concat(F(","));
+    arg.concat(message);
+    sendLog(arg);
+  }
   void sendLog(const __FlashStringHelper *severity, String message)
   {
-    String msg;
-    msg.concat(severity);
-    msg.concat(F(","));
-    msg.concat(message);
-    _transport.exec(F("!log"), msg, nullptr, _failCallback);
+    String arg;
+    arg.concat(severity);
+    arg.concat(F(","));
+    arg.concat(message);
+    sendLog(arg);
+  }
+  void sendLog(const __FlashStringHelper *severity, const __FlashStringHelper *message, float value)
+  {
+    String arg;
+    arg.concat(severity);
+    arg.concat(F(","));
+    arg.concat(message);
+    arg.concat(value);
+    sendLog(arg);
   }
 
   void getRemoteControl(OnResponseCallback onResponse)
@@ -61,6 +78,11 @@ private:
   SoftwareSerial _softSerial;
   Transport _transport;
   OnFailureCallback _failCallback = nullptr;
+
+  void sendLog(String arg)
+  {
+    _transport.exec(F("!log"), arg, nullptr, _failCallback);
+  }
 };
 
 #endif
