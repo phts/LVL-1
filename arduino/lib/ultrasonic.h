@@ -36,10 +36,11 @@ public:
     }
 
     _iteration++;
-    if (_iteration >= ULTRASONIC_MAX_TRIES)
+    if (_iteration > ULTRASONIC_MAX_TRIES)
     {
       _samplesTimer.stop();
       handleDistance(_samples, _samplesGathered);
+      return;
     }
     Distance distance = _sensor.measureDistanceCm();
     if (isFailed(distance))
