@@ -6,6 +6,7 @@
 #include <TimerMs.h>
 #include "config.h"
 #include "settings.h"
+#include "level.h"
 #include "ultrasonic.h"
 #include "ui.h"
 #include "helpers.h"
@@ -40,14 +41,14 @@ void connectCallback(String resp)
   }
 }
 
-void measure(bool restartTimer = false, bool isAuto = false)
+void measure(bool restartTimer = false, bool byTimer = false)
 {
   if (startup.isStarting())
   {
     console.info(F("Not started yet. Measure skipped..."));
     return;
   }
-  bool requested = ultrasonic.requestDistance(!isAuto && !restartTimer);
+  bool requested = ultrasonic.requestDistance(byTimer || restartTimer ? MODE_AUTO : MODE_MANUAL);
   if (!requested)
   {
     return;
@@ -57,7 +58,7 @@ void measure(bool restartTimer = false, bool isAuto = false)
   {
     measureTimer.restart();
   }
-  if (restartTimer && !isAuto)
+  if (restartTimer && !byTimer)
   {
     internet.sendLog(F("info"), F("Measure timer restarted"));
   }
@@ -71,7 +72,7 @@ void startedCallback()
   measure(true, true);
 }
 
-void distanceCallback(bool success, Distance distance, bool mode, Distance samples[], byte samples_len)
+void distanceCallback(bool success, Distance distance, Mode mode, Distance samples[], byte samples_len)
 {
   internet.sendLog(F("debug"), helpers.arrayToString(samples, samples_len));
   if (!success)

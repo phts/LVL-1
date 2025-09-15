@@ -3,6 +3,7 @@
 
 #include <SoftwareSerial.h>
 #include "settings.h"
+#include "level.h"
 #include "transport.h"
 
 class Internet
@@ -37,9 +38,9 @@ public:
     _transport.tick();
   }
 
-  void sendLevel(int value, bool isManual)
+  void sendLevel(int value, Mode mode)
   {
-    _transport.exec(isManual ? F("!levelm") : F("!level"), String(value), nullptr, _failCallback);
+    _transport.exec(mode == MODE_MANUAL ? F("!levelm") : F("!level"), String(value), nullptr, _failCallback);
   }
 
   void sendLog(const __FlashStringHelper *severity, String message)

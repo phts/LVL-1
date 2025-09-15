@@ -4,11 +4,12 @@
 #include <HCSR04.h>
 #include <TimerMs.h>
 #include "settings.h"
+#include "level.h"
 #include "utils.h"
 #include "console.h"
 
 typedef float Distance;
-typedef void (*OnDistanceCallback)(bool success, Distance distance, bool mode, Distance samples[], byte samples_len);
+typedef void (*OnDistanceCallback)(bool success, Distance distance, Mode mode, Distance samples[], byte samples_len);
 
 class Ultrasonic
 {
@@ -56,7 +57,7 @@ public:
     }
   }
 
-  bool requestDistance(bool mode)
+  bool requestDistance(Mode mode)
   {
     if (_samplesTimer.active())
     {
@@ -78,7 +79,7 @@ private:
   byte _samplesGathered = 0;
   Distance _samples[ULTRASONIC_MAX_SAMPLES];
   byte _samplesTry = 0;
-  bool _mode;
+  Mode _mode;
 
   void handleDistance(Distance samples[], byte samples_len)
   {
