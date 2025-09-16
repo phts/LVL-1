@@ -165,6 +165,25 @@ void btnMeasureCallback()
   }
 }
 
+void handleRemoteControl()
+{
+  byte action = remoteControl.getAction();
+  if (action == RemoteControl::ACTION_NOTHING)
+  {
+    return;
+  }
+  remoteControl.markAsProcessed();
+  switch (action)
+  {
+  case RemoteControl::ACTION_MEASURE:
+    measure(false);
+    break;
+  case RemoteControl::ACTION_MEASURE_AND_RESET_TIMER:
+    measure(true);
+    break;
+  }
+}
+
 void setup()
 {
   Serial.begin(SERIAL_PORT);
@@ -188,19 +207,7 @@ void loop()
   ultrasonic.tick();
   startup.tick();
   remoteControl.tick();
-  switch (remoteControl.getAction())
-  {
-  case RemoteControl::ACTION_MEASURE:
-    remoteControl.markAsProcessed();
-    measure(false);
-    break;
-  case RemoteControl::ACTION_MEASURE_AND_RESET_TIMER:
-    remoteControl.markAsProcessed();
-    measure(true);
-    break;
-  default:
-    break;
-  }
+  handleRemoteControl();
 }
 
 #endif
