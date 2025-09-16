@@ -61,6 +61,7 @@ public:
     {
       console.debug(F("RemoteControl"), F("initalized: id="), _nextId);
       String msg;
+      msg.reserve(52);
       msg.concat(F("Remote control module initialized: "));
       msg.concat(F("id="));
       msg.concat(_nextId);
@@ -74,6 +75,7 @@ public:
     {
       console.debug(F("RemoteControl"), F("new ID saved:"), _nextId);
       String msg;
+      msg.reserve(43);
       msg.concat(F("Processing remote action: id="));
       msg.concat(_nextId);
       _internet->sendLog(F("info"), msg);
