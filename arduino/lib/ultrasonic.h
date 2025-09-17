@@ -14,9 +14,9 @@ typedef void (*OnDistanceCallback)(bool success, Distance distance, Mode mode, D
 class Ultrasonic
 {
 public:
-  static bool isFailed(Distance distance)
+  static bool isFailed(Distance distance, byte iteration = 5)
   {
-    return distance < 5 || distance > DISTANCE_FOR_EMPTY;
+    return (iteration == 1 && distance < 10) || distance < 0 || distance > DISTANCE_FOR_EMPTY;
   }
 
   Ultrasonic(byte pinTrigger, byte pinEcho) : _sensor(pinTrigger, pinEcho), _samplesTimer(ULTRASONIC_SAMPLES_INTERVAL)
@@ -43,7 +43,7 @@ public:
       return;
     }
     Distance distance = _sensor.measureDistanceCm();
-    if (isFailed(distance))
+    if (isFailed(distance, _iteration))
     {
       console.debug(F("Ultrasonic"), F("[skip] sample="), distance);
       return;
