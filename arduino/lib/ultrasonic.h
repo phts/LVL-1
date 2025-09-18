@@ -19,13 +19,16 @@ public:
     return (iteration == 1 && distance < 10) || distance < 0 || distance > DISTANCE_FOR_EMPTY;
   }
 
-  Ultrasonic(byte pinTrigger, byte pinEcho) : _sensor(pinTrigger, pinEcho), _samplesTimer(ULTRASONIC_SAMPLES_INTERVAL)
+  Ultrasonic(byte pinTrigger, byte pinEcho, byte pinPower) : _sensor(pinTrigger, pinEcho), _samplesTimer(ULTRASONIC_SAMPLES_INTERVAL)
   {
+    _pinPower = pinPower;
   }
 
   void setup(OnDistanceCallback cb)
   {
     _onDistanceCallback = cb;
+    pinMode(_pinPower, OUTPUT);
+    this->off();
   }
 
   void tick()
@@ -34,11 +37,15 @@ public:
     {
       return;
     }
-
     _iteration++;
+    if (_iteration == 0)
+    {
+      this->on();
+      return;
+    }
+
     if (_iteration > ULTRASONIC_MAX_TRIES)
     {
-      _samplesTimer.stop();
       handleDistance(_samples, _samplesGathered);
       return;
     }
@@ -53,7 +60,6 @@ public:
     _samplesGathered++;
     if (_samplesGathered >= ULTRASONIC_MAX_SAMPLES)
     {
-      _samplesTimer.stop();
       handleDistance(_samples, _samplesGathered);
     }
   }
@@ -67,23 +73,26 @@ public:
     }
     _samplesTimer.restart();
     _samplesGathered = 0;
-    _iteration = 0;
+    _iteration = -1;
     _mode = mode;
     console.debug(F("Ultrasonic"), F("request distance"));
     return true;
   }
 
 private:
+  byte _pinPower;
   UltraSonicDistanceSensor _sensor;
   TimerMs _samplesTimer;
   OnDistanceCallback _onDistanceCallback = nullptr;
   byte _samplesGathered = 0;
   Distance _samples[ULTRASONIC_MAX_SAMPLES];
-  byte _iteration = 0;
+  int8_t _iteration;
   Mode _mode;
 
   void handleDistance(Distance samples[], byte samples_len)
   {
+    _samplesTimer.stop();
+    this->off();
     if (samples_len < ULTRASONIC_MAX_SAMPLES)
     {
       _onDistanceCallback(false, 0, _mode, samples, samples_len, _iteration);
@@ -100,6 +109,18 @@ private:
     delete[] middleSamples;
     console.debug(F("Ultrasonic"), F("distance:"), res);
     _onDistanceCallback(true, res, _mode, samples, samples_len, _iteration);
+  }
+
+  void on()
+  {
+    console.debug(F("Ultrasonic"), F("power=on"));
+    digitalWrite(_pinPower, LOW);
+  }
+
+  void off()
+  {
+    console.debug(F("Ultrasonic"), F("power=off"));
+    digitalWrite(_pinPower, HIGH);
   }
 };
 

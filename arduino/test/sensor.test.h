@@ -8,21 +8,54 @@
 #include "../lib/config.h"
 #include "../lib/console.h"
 
+bool power;
 Button btnMeasure(Config::PIN_BTN_MEASURE);
 TimerMs samplesTimer(ULTRASONIC_SAMPLES_INTERVAL);
 UltraSonicDistanceSensor sensor(Config::PIN_ULTRASONIC_SENSOR_TRIGGER, Config::PIN_ULTRASONIC_SENSOR_ECHO);
 
-void measure()
+void on()
 {
-  samplesTimer.restart();
+  console.debug(F("Ultrasonic"), F("power=on"));
+  digitalWrite(Config::PIN_ULTRASONIC_SENSOR_POWER, LOW);
+  power = true;
+}
+
+void off()
+{
+  console.debug(F("Ultrasonic"), F("power=off"));
+  digitalWrite(Config::PIN_ULTRASONIC_SENSOR_POWER, HIGH);
+  power = false;
+}
+
+void toggle()
+{
+  if (samplesTimer.active())
+  {
+    samplesTimer.stop();
+  }
+  else
+  {
+    samplesTimer.restart();
+  }
 }
 
 void btnMeasureCallback()
 {
   switch (btnMeasure.action())
   {
-  case EB_PRESS:
-    measure();
+  case EB_CLICK:
+    toggle();
+    break;
+  case EB_HOLD:
+    if (power)
+    {
+      off();
+    }
+    else
+    {
+      on();
+    }
+    break;
   }
 }
 
@@ -30,6 +63,8 @@ void setup()
 {
   Serial.begin(SERIAL_PORT);
   btnMeasure.attach(btnMeasureCallback);
+  pinMode(Config::PIN_ULTRASONIC_SENSOR_POWER, OUTPUT);
+  on();
 }
 
 void loop()

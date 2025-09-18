@@ -18,7 +18,7 @@
 #include "remote_control.h"
 
 Button btnMeasure(Config::PIN_BTN_MEASURE);
-Ultrasonic ultrasonic(Config::PIN_ULTRASONIC_SENSOR_TRIGGER, Config::PIN_ULTRASONIC_SENSOR_ECHO);
+Ultrasonic ultrasonic(Config::PIN_ULTRASONIC_SENSOR_TRIGGER, Config::PIN_ULTRASONIC_SENSOR_ECHO, Config::PIN_ULTRASONIC_SENSOR_POWER);
 Led led(Config::PIN_LED);
 Indicator indicator(&led, Config::PIN_METER);
 UI ui(&indicator, LEVEL_WARNING);
@@ -187,6 +187,7 @@ void handleRemoteControl()
 void setup()
 {
   Serial.begin(SERIAL_PORT);
+  console.info(F("PHTS LVL-1"));
   btnMeasure.attach(btnMeasureCallback);
   ui.setup();
   internet.setup(transportErrorCallback);
