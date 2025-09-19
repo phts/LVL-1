@@ -88,8 +88,15 @@ public:
     {
       console.debug(F("RemoteControl"), F("new ID saved:"), _nextId);
       String msg;
-      msg.reserve(43);
-      msg.concat(F("Processing remote action: id="));
+      msg.reserve(70);
+      msg.concat(F("Processing remote action \""));
+      msg.concat(_nextAction);
+      if (_nextActionPayload.length())
+      {
+        msg.concat(F("\" with payload \""));
+        msg.concat(_nextActionPayload);
+      }
+      msg.concat(F("\": id="));
       msg.concat(_nextId);
       _internet->sendLog(F("info"), msg);
       _currentAction = _nextAction;
