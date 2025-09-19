@@ -60,6 +60,11 @@ public:
     {
       _nextAction = ACTION_SET_MEASURE_INTERVAL;
     }
+    else
+    {
+      _internet->sendLog(F("warn"), F("Unsupported remote action: "), _nextAction);
+      _nextAction = ACTION_NOTHING;
+    }
   }
 
   void setNextActionPayload(String nextActionPayload)
@@ -87,6 +92,12 @@ public:
     }
     if (_nextId != _currentId)
     {
+      if (_nextAction == ACTION_NOTHING)
+      {
+        _currentId = _nextId;
+        _currentAction = _nextAction;
+        return;
+      }
       console.debug(F("RemoteControl"), F("new ID saved:"), _nextId);
       String msg;
       msg.reserve(70);
