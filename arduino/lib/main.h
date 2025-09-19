@@ -91,7 +91,8 @@ void distanceCallback(bool success, Distance distance, Mode mode, Distance sampl
 void transportErrorCallback(String command, byte type, String desc)
 {
   String msg;
-  msg.concat(F("Failed to process the command \""));
+  msg.reserve(60);
+  msg.concat(F("Failed command \""));
   msg.concat(command);
   msg.concat(F("\": "));
   msg.concat(desc);
@@ -106,33 +107,34 @@ void transportErrorCallback(String command, byte type, String desc)
     return;
   }
 
-  byte uiError;
+  byte code;
   if (type == Transport::FAILURE_TYPE_EXEC_TIMEOUT || type == Transport::FAILURE_TYPE_RESP_TIMEOUT)
   {
-    uiError = UI::ERROR_CODE_TRANSPORT;
+    code = UI::ERROR_CODE_TRANSPORT;
   }
   else if (type == Transport::FAILURE_TYPE_RESPONSE && desc == F("Not connected"))
   {
-    uiError = UI::ERROR_CODE_WIFI;
+    code = UI::ERROR_CODE_WIFI;
   }
   else
   {
-    uiError = UI::ERROR_CODE_HTTP;
+    code = UI::ERROR_CODE_HTTP;
   }
-  ui.showError(uiError, true);
+  ui.showError(code, true);
   if (Command::equals(command, F("!level")))
   {
     internet.disconnect(nullptr);
     internet.connect(connectCallback, nullptr);
   }
 
-  String msg2;
-  msg2.concat(msg);
-  msg2.concat(F("\ntype="));
-  msg2.concat(type);
-  msg2.concat(F(", code="));
-  msg2.concat(uiError);
-  internet.sendLog(F("error"), msg2);
+  String log;
+  log.reserve(75);
+  log.concat(msg);
+  log.concat(F("\ntype="));
+  log.concat(type);
+  log.concat(F(", code="));
+  log.concat(code);
+  internet.sendLog(F("error"), log);
 }
 
 void remoteControlActionCallback(String resp)
