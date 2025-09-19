@@ -14,7 +14,7 @@ public:
   static const byte ACTION_MEASURE_AND_RESET_TIMER = 2;
   static const byte ACTION_SET_MEASURE_INTERVAL = 3;
 
-  RemoteControl(Internet *internet) : _timer(REMOTE_CONTROL_INTERVAL)
+  RemoteControl(Internet *internet) : _timer(REMOTE_CONTROL_INIT_DELAY)
   {
     _internet = internet;
   }
@@ -81,6 +81,7 @@ public:
       _internet->sendLog(F("info"), msg);
       _currentAction = ACTION_NOTHING;
       _currentId = _nextId;
+      _timer.setTime(REMOTE_CONTROL_INTERVAL);
       _initialized = true;
       return;
     }
