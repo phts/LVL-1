@@ -14,8 +14,8 @@ Transport transport(&softSerial);
 
 void setup()
 {
-  Serial.begin(SERIAL_PORT);
-  softSerial.begin(SERIAL_PORT);
+  Serial.begin(CONSOLE_SERIAL_PORT_BAUD);
+  softSerial.begin(TRANSPORT_SERIAL_PORT_BAUD);
 }
 
 void onResponse(String resp)

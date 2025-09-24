@@ -61,7 +61,7 @@ void btnMeasureCallback()
 
 void setup()
 {
-  Serial.begin(SERIAL_PORT);
+  Serial.begin(CONSOLE_SERIAL_PORT_BAUD);
   btnMeasure.attach(btnMeasureCallback);
   pinMode(Config::PIN_ULTRASONIC_SENSOR_POWER, OUTPUT);
   on();

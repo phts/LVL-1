@@ -2,7 +2,8 @@
 #define settings_h
 
 #define DEBUG false
-#define SERIAL_PORT 9600
+
+#define SERIAL_PORT_BAUD 9600
 
 #define WIFI_STATUS_INTERVAL 500
 #define WIFI_STATUS_MAX_RETRIES 100

@@ -200,7 +200,7 @@ void handleRemoteControl()
 
 void setup()
 {
-  Serial.begin(SERIAL_PORT);
+  console.setup(CONSOLE_SERIAL_PORT_BAUD);
   console.info(F("PHTS LVL-1"));
   btnMeasure.attach(btnMeasureCallback);
   ui.setup();

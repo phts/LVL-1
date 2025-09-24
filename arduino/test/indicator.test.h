@@ -32,7 +32,7 @@ void btnMeasureCallback()
 
 void setup()
 {
-  Serial.begin(SERIAL_PORT);
+  Serial.begin(CONSOLE_SERIAL_PORT_BAUD);
   btnMeasure.attach(btnMeasureCallback);
 }
 

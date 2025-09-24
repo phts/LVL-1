@@ -4,6 +4,10 @@
 class Console
 {
 public:
+  void setup(long baud)
+  {
+    Serial.begin(baud);
+  }
   void info(String str)
   {
     Serial.println(str);

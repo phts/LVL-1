@@ -198,7 +198,7 @@ void rc()
 
 void setup()
 {
-  Serial.begin(SERIAL_PORT);
+  Serial.begin(SERIAL_PORT_BAUD);
 }
 
 void loop()

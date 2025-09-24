@@ -15,7 +15,7 @@ public:
 
   void setup(OnFailureCallback failCallback)
   {
-    _softSerial.begin(SERIAL_PORT);
+    _softSerial.begin(TRANSPORT_SERIAL_PORT_BAUD);
     _failCallback = failCallback;
   }
 
