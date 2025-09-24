@@ -13,7 +13,7 @@ void log(String value)
 {
   if (WiFi.status() != WL_CONNECTED)
   {
-    sendFail(String(F("Not connected: status=")) + WiFi.status());
+    sendFail(F("Not connected: status="), WiFi.status());
     return;
   }
 
@@ -40,7 +40,7 @@ void log(String value)
 
   if (code < 200 || code > 299)
   {
-    sendFail(String(F("Response code: ")) + code);
+    sendFail(F("Response code: "), code);
     return;
   }
   sendOk();

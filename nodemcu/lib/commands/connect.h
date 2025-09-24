@@ -37,7 +37,7 @@ void connect()
   delay(WIFI_STATUS_INTERVAL * 2);
   if (WiFi.status() != WL_CONNECTED)
   {
-    sendFail(String(F("Not connected: status=")) + WiFi.status());
+    sendFail(F("Not connected: status="), WiFi.status());
     return;
   }
   progress = sendProgress(100);

@@ -12,7 +12,7 @@ void level(String value, bool isManual = false)
 {
   if (WiFi.status() != WL_CONNECTED)
   {
-    sendFail(String(F("Not connected: status=")) + WiFi.status());
+    sendFail(F("Not connected: status="), WiFi.status());
     return;
   }
 
@@ -30,7 +30,7 @@ void level(String value, bool isManual = false)
 
   if (code < 200 || code > 299)
   {
-    sendFail(String(F("Response code: ")) + code);
+    sendFail(F("Response code: "), code);
     return;
   }
   sendOk();
