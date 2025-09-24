@@ -78,7 +78,7 @@ void loop()
   }
   else
   {
-    sendFail(F("Unknown command"));
+    sendFail(F("Unknown command: "), cmd);
   }
 }
 

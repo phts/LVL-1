@@ -28,6 +28,13 @@ void sendValue(const __FlashStringHelper *cmd, const __FlashStringHelper *m1, in
   Serial.print(m1);
   Serial.println(m2);
 }
+void sendValue(const __FlashStringHelper *cmd, const __FlashStringHelper *m1, String m2)
+{
+  Serial.print(cmd);
+  Serial.print(Response::ValueDivider);
+  Serial.print(m1);
+  Serial.println(m2);
+}
 
 int sendProgress(int value)
 {
@@ -49,6 +56,10 @@ void sendFail(String desc)
   sendValue(Response::failure(), desc);
 }
 void sendFail(const __FlashStringHelper *m1, int m2)
+{
+  sendValue(Response::failure(), m1, m2);
+}
+void sendFail(const __FlashStringHelper *m1, String m2)
 {
   sendValue(Response::failure(), m1, m2);
 }
