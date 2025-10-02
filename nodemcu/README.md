@@ -30,7 +30,7 @@ Usually a command looks like: `!<name>` or `!<name>=<params>`. And a response: `
 
 ## Development
 
-## Setup
+### Setup
 
 1. Add `http://arduino.esp8266.com/stable/package_esp8266com_index.json` into Preferences &rarr; `Additional Boards Manager URLs`
 2. Go to `Boards Manager`
@@ -40,3 +40,15 @@ Usually a command looks like: `!<name>` or `!<name>=<params>`. And a response: `
 ### Libraries
 
 - [UrlEncode](https://github.com/plageoj/urlencode)
+
+### Upload firmware
+
+1. :warning: Turn off the device to isolate the module from Arduino connection
+2. Connect to Windows PC via USB (MacOS has problems with ESP8266/CH340G drivers support)
+3. Upload firmware via Arduino IDE
+
+#### Debugging
+
+4. Open serial monitor
+5. Select baud 9600
+6. Start typing [commands](#api) (e.g. `!ping`) and check the responses
