@@ -173,16 +173,26 @@ void rc()
   http.end();
   debug(F("Response"), response);
 
-  int divider = response.indexOf('|');
-  if (divider < 0)
+  int actionDivider = response.indexOf('|');
+  if (actionDivider < 0)
   {
     sendFail(F("Response wrong format: missing divider"));
     return;
   }
-  String id = response.substring(0, divider);
-  String action = response.substring(divider + 1);
+  String id = response.substring(0, actionDivider);
+  String action = response.substring(actionDivider + 1);
   sendValue(F("id!"), id);
-  sendValue(F("action!"), action);
+
+  int payloadDivider = action.indexOf('=');
+  if (payloadDivider > 0)
+  {
+    sendValue(F("action!"), action.substring(0, payloadDivider));
+    sendValue(F("payload!"), action.substring(payloadDivider + 1));
+  }
+  else
+  {
+    sendValue(F("action!"), action);
+  }
   sendOk();
 }
 

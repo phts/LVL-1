@@ -145,6 +145,10 @@ void remoteControlActionCallback(String resp)
   {
     remoteControl.setNextAction(Response::valueOf(resp));
   }
+  else if (Response::equals(resp, F("payload!")))
+  {
+    remoteControl.setNextActionPayload(Response::valueOf(resp));
+  }
   else if (Response::isSuccess(resp))
   {
     remoteControl.saveNext();
@@ -180,6 +184,14 @@ void handleRemoteControl()
     break;
   case RemoteControl::ACTION_MEASURE_AND_RESET_TIMER:
     measure(true);
+    break;
+  case RemoteControl::ACTION_SET_MEASURE_INTERVAL:
+    long time = remoteControl.getActionPayload().toInt() * 60 * 60 * 1000;
+    if (time > 0)
+    {
+      measureTimer.setTime(time);
+      internet.sendLog(F("info"), F("Measure interval updated: "), time, F(" ms"));
+    }
     break;
   }
 }

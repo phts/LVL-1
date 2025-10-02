@@ -12,6 +12,7 @@ public:
   static const byte ACTION_NOTHING = 0;
   static const byte ACTION_MEASURE = 1;
   static const byte ACTION_MEASURE_AND_RESET_TIMER = 2;
+  static const byte ACTION_SET_MEASURE_INTERVAL = 3;
 
   RemoteControl(Internet *internet) : _timer(REMOTE_CONTROL_INTERVAL)
   {
@@ -24,6 +25,7 @@ public:
     _timer.start();
     _currentId.reserve(14);
     _nextId.reserve(14);
+    _nextActionPayload.reserve(2);
   }
 
   void tick()
@@ -40,6 +42,7 @@ public:
   {
     console.debug(F("RemoteControl"), F("setNextId:"), nextId);
     _nextId = nextId;
+    _nextActionPayload = "";
   }
 
   void setNextAction(String nextAction)
@@ -53,6 +56,16 @@ public:
     {
       _nextAction = ACTION_MEASURE_AND_RESET_TIMER;
     }
+    else if (nextAction == F("interval"))
+    {
+      _nextAction = ACTION_SET_MEASURE_INTERVAL;
+    }
+  }
+
+  void setNextActionPayload(String nextActionPayload)
+  {
+    console.debug(F("RemoteControl"), F("setNextActionPayload:"), nextActionPayload);
+    _nextActionPayload = nextActionPayload;
   }
 
   void saveNext()
@@ -81,12 +94,18 @@ public:
       _internet->sendLog(F("info"), msg);
       _currentAction = _nextAction;
       _currentId = _nextId;
+      _currentActionPayload = _nextActionPayload;
     }
   }
 
   byte getAction()
   {
     return _currentAction;
+  }
+
+  String getActionPayload()
+  {
+    return _currentActionPayload;
   }
 
   void markAsProcessed()
@@ -103,6 +122,8 @@ private:
   byte _currentAction = ACTION_NOTHING;
   String _nextId;
   String _currentId;
+  String _nextActionPayload;
+  String _currentActionPayload;
   bool _initialized = false;
 };
 

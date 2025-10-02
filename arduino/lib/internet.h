@@ -80,6 +80,17 @@ public:
     arg.concat(value);
     sendLog(arg);
   }
+  void sendLog(const __FlashStringHelper *severity, const __FlashStringHelper *m1, long value, const __FlashStringHelper *m2)
+  {
+    String arg;
+    arg.reserve(40);
+    arg.concat(severity);
+    arg.concat(F(","));
+    arg.concat(m1);
+    arg.concat(value);
+    arg.concat(m2);
+    sendLog(arg);
+  }
 
   void getRemoteControl(OnResponseCallback onResponse)
   {
