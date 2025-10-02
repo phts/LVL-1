@@ -114,7 +114,7 @@ private:
   void showErrorCode(byte code)
   {
 
-    _indicator->setLevel(100 / ERRORS_SIZE * code);
+    _indicator->setLevel(round(100.0 / ERRORS_SIZE * code));
     _indicator->setLed(Indicator::LED_ERROR);
   }
 
