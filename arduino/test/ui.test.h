@@ -1,25 +1,28 @@
-#ifndef indicator_test_h
-#define indicator_test_h
+#ifndef ui_test_h
+#define ui_test_h
 
 #include <EncButton.h>
 #include "../lib/config.h"
 #include "../lib/settings.h"
 #include "../lib/led.h"
 #include "../lib/indicator.h"
+#include "../lib/ui.h"
 
 Button btnMeasure(Config::PIN_BTN_MEASURE);
 Led led(Config::PIN_LED);
 Indicator indicator(&led, Config::PIN_METER);
-int direction = 1;
+UI ui(&indicator, LEVEL_WARNING);
+
+byte direction = 1;
+byte error = 0;
 
 void measure(byte delta)
 {
-  indicator.setLevel(indicator.getLevel() + delta * direction);
+  ui.showLevel(indicator.getLevel() + delta * direction);
   Serial.println(indicator.getLevel());
   if (indicator.getLevel() == 100 || indicator.getLevel() == 0)
   {
     direction = -1 * direction;
-    indicator.setLed(indicator.getLevel() == 100 ? Indicator::LED_WARNING : Indicator::LED_OFF);
   }
 }
 
@@ -28,10 +31,12 @@ void btnMeasureCallback()
   switch (btnMeasure.action())
   {
   case EB_CLICK:
-    measure(1);
+    ui.hideError();
+    measure(5);
     break;
   case EB_HOLD:
-    measure(10);
+    error = (error + 1) % UI::ERRORS_SIZE;
+    ui.showError(error, true);
     break;
   }
 }
@@ -45,7 +50,7 @@ void setup()
 void loop()
 {
   btnMeasure.tick();
-  indicator.tick();
+  ui.tick();
 }
 
 #endif

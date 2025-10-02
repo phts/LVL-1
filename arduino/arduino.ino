@@ -3,4 +3,5 @@
 // #include "test/indicator.test.h"
 // #include "test/sensor.test.h"
 // #include "test/transport.test.h"
+// #include "test/ui.test.h"
 #endif
