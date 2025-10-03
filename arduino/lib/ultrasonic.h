@@ -46,6 +46,7 @@ public:
 
     if (_iteration > ULTRASONIC_MAX_TRIES)
     {
+      _iteration = ULTRASONIC_MAX_TRIES;
       handleDistance(_samples, _samplesGathered);
       return;
     }
