@@ -62,7 +62,7 @@ public:
     }
     else
     {
-      _internet->sendLog(F("warn"), F("Unsupported remote action: "), _nextAction);
+      _internet->sendLog(F("warn"), F("Unsupported remote action: "), nextAction);
       _nextAction = ACTION_NOTHING;
     }
   }

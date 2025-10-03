@@ -80,13 +80,13 @@ public:
     arg.concat(value);
     sendLog(arg);
   }
-  void sendLog(const __FlashStringHelper *severity, const __FlashStringHelper *message, byte value)
+  void sendLog(const __FlashStringHelper *severity, const __FlashStringHelper *m1, String m2)
   {
     String arg;
     arg.concat(severity);
     arg.concat(F(","));
-    arg.concat(message);
-    arg.concat(value);
+    arg.concat(m1);
+    arg.concat(m2);
     sendLog(arg);
   }
   void sendLog(const __FlashStringHelper *severity, const __FlashStringHelper *m1, long value, const __FlashStringHelper *m2)
