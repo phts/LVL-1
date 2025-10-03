@@ -3,23 +3,31 @@
 
 #include <Response.h>
 
+void sendValue(const __FlashStringHelper *cmd)
+{
+  Serial.println(cmd);
+  delay(50);
+}
 void sendValue(const __FlashStringHelper *cmd, int value)
 {
   Serial.print(cmd);
   Serial.print(Command::ValueDivider);
   Serial.println(value);
+  delay(50);
 }
 void sendValue(const __FlashStringHelper *cmd, String value)
 {
   Serial.print(cmd);
   Serial.print(Response::ValueDivider);
   Serial.println(value);
+  delay(50);
 }
 void sendValue(const __FlashStringHelper *cmd, const __FlashStringHelper *value)
 {
   Serial.print(cmd);
   Serial.print(Response::ValueDivider);
   Serial.println(value);
+  delay(50);
 }
 void sendValue(const __FlashStringHelper *cmd, const __FlashStringHelper *m1, int m2)
 {
@@ -27,6 +35,7 @@ void sendValue(const __FlashStringHelper *cmd, const __FlashStringHelper *m1, in
   Serial.print(Response::ValueDivider);
   Serial.print(m1);
   Serial.println(m2);
+  delay(50);
 }
 void sendValue(const __FlashStringHelper *cmd, const __FlashStringHelper *m1, String m2)
 {
@@ -34,6 +43,7 @@ void sendValue(const __FlashStringHelper *cmd, const __FlashStringHelper *m1, St
   Serial.print(Response::ValueDivider);
   Serial.print(m1);
   Serial.println(m2);
+  delay(50);
 }
 
 int sendProgress(int value)
@@ -44,7 +54,7 @@ int sendProgress(int value)
 
 void sendOk()
 {
-  Serial.println(Response::success());
+  sendValue(Response::success());
 }
 
 void sendFail(const __FlashStringHelper *desc)
