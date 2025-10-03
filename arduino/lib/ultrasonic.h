@@ -114,13 +114,13 @@ private:
   void on()
   {
     console.debug(F("Ultrasonic"), F("power=on"));
-    digitalWrite(_pinPower, LOW);
+    digitalWrite(_pinPower, HIGH);
   }
 
   void off()
   {
     console.debug(F("Ultrasonic"), F("power=off"));
-    digitalWrite(_pinPower, HIGH);
+    digitalWrite(_pinPower, LOW);
   }
 };
 

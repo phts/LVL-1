@@ -16,14 +16,14 @@ UltraSonicDistanceSensor sensor(Config::PIN_ULTRASONIC_SENSOR_TRIGGER, Config::P
 void on()
 {
   console.debug(F("Ultrasonic"), F("power=on"));
-  digitalWrite(Config::PIN_ULTRASONIC_SENSOR_POWER, LOW);
+  digitalWrite(Config::PIN_ULTRASONIC_SENSOR_POWER, HIGH);
   power = true;
 }
 
 void off()
 {
   console.debug(F("Ultrasonic"), F("power=off"));
-  digitalWrite(Config::PIN_ULTRASONIC_SENSOR_POWER, HIGH);
+  digitalWrite(Config::PIN_ULTRASONIC_SENSOR_POWER, LOW);
   power = false;
 }
 
