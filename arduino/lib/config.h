@@ -4,8 +4,8 @@
 class Config
 {
 public:
-  static const byte PIN_ULTRASONIC_SENSOR_TRIGGER = 2;
-  static const byte PIN_ULTRASONIC_SENSOR_ECHO = 3;
+  static const byte PIN_ULTRASONIC_SENSOR_ECHO = 2;
+  static const byte PIN_ULTRASONIC_SENSOR_TRIGGER = 3;
   static const byte PIN_ULTRASONIC_SENSOR_POWER = 4;
   static const byte PIN_METER = 6;
   static const byte PIN_LED = 7;
