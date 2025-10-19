@@ -20,7 +20,7 @@ Consists of 2 modules: [Arduino Nano](./arduino) and [NodeMCU V3](./nodemcu).
 
 Hosted on: [OSHWLab/phts/lvl-1](https://oshwlab.com/phts/lvl-1).
 
-![](./doc/schema.png)
+![](https://image-pro.easyeda.com/pullimages/742f0a96d47647eaa1274fe2e482c86c.webp)
 
 ### Deployment diagram
 
