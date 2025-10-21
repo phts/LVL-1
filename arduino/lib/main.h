@@ -27,6 +27,7 @@ Startup startup(&ui, &internet);
 RemoteControl remoteControl(&internet);
 
 TimerMs measureTimer(MEASURE_INTERVAL);
+TimerMs recoveryTimer(MEASURE_FATAL_RECOVERY_TIMER, false, 1);
 
 void connectCallback(String resp)
 {
@@ -41,14 +42,15 @@ void connectCallback(String resp)
   }
 }
 
-void measure(bool restartTimer = false, bool byTimer = false)
+void measure(bool restartTimer = false, bool byTimer = false, bool recovery = false)
 {
   if (startup.isStarting())
   {
     console.info(F("Not started yet. Measure skipped..."));
     return;
   }
-  bool requested = ultrasonic.requestDistance(byTimer || restartTimer ? MODE_AUTO : MODE_MANUAL);
+  byte mode = byTimer || restartTimer ? MODE_AUTO : (recovery ? MODE_RECOVERY : MODE_MANUAL);
+  bool requested = ultrasonic.requestDistance(mode);
   if (!requested)
   {
     return;
@@ -77,6 +79,10 @@ void distanceCallback(bool success, Distance distance, Mode mode, Distance sampl
   internet.sendLog(F("debug"), F("Samples: "), helpers.arrayToString(samples, samples_len), F("\nIterations: "), iterations);
   if (!success)
   {
+    if (mode == MODE_AUTO)
+    {
+      recoveryTimer.restart();
+    }
     ui.showError(UI::ERROR_CODE_SENSOR);
     console.info(F("Failed to read ultrasonic sensor"));
     internet.sendLog(F("fatal"), F("Failed to read ultrasonic sensor"));
@@ -217,6 +223,10 @@ void loop()
   if (measureTimer.tick())
   {
     measure(true, true);
+  }
+  if (recoveryTimer.tick())
+  {
+    measure(false, false, true);
   }
   internet.tick();
   ultrasonic.tick();
