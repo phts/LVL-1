@@ -11,6 +11,21 @@ public:
     return constrain(map(distance, DISTANCE_FOR_EMPTY, DISTANCE_FOR_FULL, 0, 100), 0, 100);
   }
 
+  float distanceToLevelM3(float distance)
+  {
+    if (distance >= DISTANCE_FOR_EMPTY)
+    {
+      return 0;
+    }
+    if (distance <= DISTANCE_FOR_FULL)
+    {
+      return LEVEL_MAX_M3;
+    }
+    float level = (float)DISTANCE_FOR_EMPTY - distance;
+    float height = DISTANCE_FOR_EMPTY - DISTANCE_FOR_FULL;
+    return level / height * LEVEL_MAX_M3;
+  }
+
   String arrayToString(float array[], byte len)
   {
     if (len == 0)

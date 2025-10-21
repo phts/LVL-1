@@ -6,8 +6,8 @@
 #define WIFI_NAME F("xxx")
 #define WIFI_PASSWORD F("xxx")
 
-#define LEVEL_POST_ENDPOINT F("http://example.com")
-#define LOG_POST_ENDPOINT F("http://example.com")
-#define RC_GET_ENDPOINT F("http://example.com")
+#define LEVEL_POST_ENDPOINT F("http://example.com/level?value={{value}}&mode={{mode}}")
+#define LOG_POST_ENDPOINT F("http://example.com/log?severity={{severity}}&message={{message}}")
+#define RC_GET_ENDPOINT F("http://example.com/rc")
 
 #endif

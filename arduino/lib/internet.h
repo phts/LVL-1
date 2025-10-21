@@ -38,9 +38,14 @@ public:
     _transport.tick();
   }
 
-  void sendLevel(int value, Mode mode)
+  void sendLevel(int value, float value_m3, Mode mode)
   {
-    _transport.exec(mode == MODE_MANUAL ? F("!levelm") : F("!level"), String(value), nullptr, _failCallback);
+    String arg;
+    arg.reserve(10);
+    arg.concat(value);
+    arg.concat(F("|"));
+    arg.concat(value_m3);
+    _transport.exec(mode == MODE_MANUAL ? F("!levelm") : F("!level"), arg, nullptr, _failCallback);
   }
 
   void sendLog(const __FlashStringHelper *severity, const __FlashStringHelper *message)
