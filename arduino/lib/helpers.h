@@ -26,6 +26,11 @@ public:
     return level / height * LEVEL_MAX_M3;
   }
 
+  byte calcErrorRate(byte iterations)
+  {
+    return round(100.0 * (iterations - ULTRASONIC_MAX_SAMPLES) / (ULTRASONIC_MAX_TRIES - ULTRASONIC_MAX_SAMPLES + 1));
+  }
+
   String arrayToString(float array[], byte len)
   {
     if (len == 0)
