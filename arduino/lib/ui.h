@@ -38,6 +38,7 @@ public:
   void showLevel(byte value)
   {
     _level = value;
+    _cachedError = ERROR_CODE_NONE;
     console.debug(F("UI"), F("show level:"), value);
     showCachedLevel();
   }
@@ -113,7 +114,6 @@ private:
 
   void showErrorCode(byte code)
   {
-
     _indicator->setLevel(round(100.0 / ERRORS_SIZE * code));
     _indicator->setLed(Indicator::LED_ERROR);
   }
