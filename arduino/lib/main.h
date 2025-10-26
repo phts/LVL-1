@@ -33,12 +33,7 @@ void connectCallback(String resp)
 {
   if (Response::equals(resp, F("progress!")))
   {
-    int progress = Response::valueOf(resp).toInt();
-    startup.setMaxProgress(progress);
-    if (progress == 100)
-    {
-      internet.sendLog(F("info"), F("Connected to Wi-Fi"));
-    }
+    startup.setMaxProgress(Response::valueOf(resp).toInt());
   }
 }
 
