@@ -2,28 +2,24 @@
 #define helpers_h
 
 #include "settings.h"
+#include "ultrasonic.h"
 
 class Helpers
 {
 public:
-  int distanceToLevel(float distance)
-  {
-    return constrain(map(distance, DISTANCE_FOR_EMPTY, DISTANCE_FOR_FULL, 0, 100), 0, 100);
-  }
-
-  float distanceToLevelM3(float distance)
+  float distanceToLevel(Distance distance)
   {
     if (distance >= DISTANCE_FOR_EMPTY)
     {
-      return 0;
+      return 0.0;
     }
     if (distance <= DISTANCE_FOR_FULL)
     {
-      return LEVEL_MAX_M3;
+      return 100.0;
     }
-    float level = (float)DISTANCE_FOR_EMPTY - distance;
+    float level = DISTANCE_FOR_EMPTY - distance;
     float height = DISTANCE_FOR_EMPTY - DISTANCE_FOR_FULL;
-    return level / height * LEVEL_MAX_M3;
+    return level / height * 100.0;
   }
 
   byte calcErrorRate(byte iterations)

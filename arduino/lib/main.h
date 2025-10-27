@@ -84,11 +84,10 @@ void distanceCallback(bool success, Distance distance, Mode mode, Distance sampl
     return;
   }
   internet.sendLog(F("debug"), F("Distance from ultrasonic sensor: "), distance);
-  int lvl = helpers.distanceToLevel(distance);
-  float lvl_m3 = helpers.distanceToLevelM3(distance);
+  float lvl = helpers.distanceToLevel(distance);
   byte errorRate = helpers.calcErrorRate(iterations);
   ui.showLevel(lvl);
-  internet.sendLevel(lvl, lvl_m3, errorRate, mode);
+  internet.sendLevel(lvl, errorRate, mode);
 }
 
 void transportErrorCallback(String command, byte type, String desc)

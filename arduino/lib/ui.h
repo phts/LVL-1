@@ -35,9 +35,9 @@ public:
     }
   }
 
-  void showLevel(byte value)
+  void showLevel(float value)
   {
-    _level = value;
+    _level = round(value);
     _cachedError = ERROR_CODE_NONE;
     console.debug(F("UI"), F("show level:"), value);
     showCachedLevel();
