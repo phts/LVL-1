@@ -16,5 +16,5 @@ By design it is able to work without internet connection or even without whole [
 
 - [ArduinoQueue](https://github.com/EinarArnason/ArduinoQueue)
 - [EncButton](https://github.com/GyverLibs/EncButton)
-- [HCSR04](https://github.com/Martinsos/arduino-lib-hc-sr04)
+- [HCSR04](https://github.com/Martinsos/arduino-lib-hc-sr04) (if such sensor is used)
 - [TimerMs](https://github.com/GyverLibs/TimerMs)

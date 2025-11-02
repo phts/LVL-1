@@ -1,14 +1,13 @@
 #ifndef ultrasonic_h
 #define ultrasonic_h
 
-#include <HCSR04.h>
 #include <TimerMs.h>
+#include "sensor_lib_shim.h"
 #include "settings.h"
 #include "level.h"
 #include "utils.h"
 #include "console.h"
 
-typedef float Distance;
 typedef void (*OnDistanceCallback)(bool success, Distance distance, Mode mode, Distance samples[], byte samples_len, byte iterations);
 
 class Ultrasonic
@@ -82,7 +81,7 @@ public:
 
 private:
   byte _pinPower;
-  UltraSonicDistanceSensor _sensor;
+  Sensor _sensor;
   TimerMs _samplesTimer;
   OnDistanceCallback _onDistanceCallback = nullptr;
   byte _samplesGathered = 0;

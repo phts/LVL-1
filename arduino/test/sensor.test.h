@@ -1,29 +1,41 @@
-#ifndef indicator_test_h
-#define indicator_test_h
+#ifndef sensor_test_h
+#define sensor_test_h
 
 #include <EncButton.h>
-#include <HCSR04.h>
 #include <TimerMs.h>
+#include "../lib/sensor_lib_shim.h"
 #include "../lib/settings.h"
 #include "../lib/config.h"
-#include "../lib/console.h"
+
+#define PROD_ENV false
+#if PROD_ENV
+#define TEST_BTN_MEASURE Config::PIN_BTN_MEASURE
+#define TEST_SENSOR_TRIGGER Config::PIN_ULTRASONIC_SENSOR_TRIGGER
+#define TEST_SENSOR_ECHO Config::PIN_ULTRASONIC_SENSOR_ECHO
+#define TEST_SENSOR_POWER Config::PIN_ULTRASONIC_SENSOR_POWER
+#else
+#define TEST_BTN_MEASURE 5
+#define TEST_SENSOR_TRIGGER 11
+#define TEST_SENSOR_ECHO 12
+#define TEST_SENSOR_POWER 10
+#endif
 
 bool power;
-Button btnMeasure(Config::PIN_BTN_MEASURE);
+Button btnMeasure(TEST_BTN_MEASURE);
 TimerMs samplesTimer(ULTRASONIC_SAMPLES_INTERVAL);
-UltraSonicDistanceSensor sensor(Config::PIN_ULTRASONIC_SENSOR_TRIGGER, Config::PIN_ULTRASONIC_SENSOR_ECHO);
+Sensor sensor(TEST_SENSOR_TRIGGER, TEST_SENSOR_ECHO);
 
 void on()
 {
-  console.debug(F("Ultrasonic"), F("power=on"));
-  digitalWrite(Config::PIN_ULTRASONIC_SENSOR_POWER, HIGH);
+  Serial.println(String(F("Ultrasonic")) + F("power=on"));
+  digitalWrite(TEST_SENSOR_POWER, HIGH);
   power = true;
 }
 
 void off()
 {
-  console.debug(F("Ultrasonic"), F("power=off"));
-  digitalWrite(Config::PIN_ULTRASONIC_SENSOR_POWER, LOW);
+  Serial.println(String(F("Ultrasonic")) + F("power=off"));
+  digitalWrite(TEST_SENSOR_POWER, LOW);
   power = false;
 }
 
@@ -63,8 +75,9 @@ void setup()
 {
   Serial.begin(CONSOLE_SERIAL_PORT_BAUD);
   btnMeasure.attach(btnMeasureCallback);
-  pinMode(Config::PIN_ULTRASONIC_SENSOR_POWER, OUTPUT);
+  pinMode(TEST_SENSOR_POWER, OUTPUT);
   on();
+  toggle();
 }
 
 void loop()
@@ -73,7 +86,7 @@ void loop()
   if (samplesTimer.tick())
   {
     float distance = sensor.measureDistanceCm();
-    console.debug(F("Ultrasonic"), F("sample="), distance);
+    Serial.println(String(F("Ultrasonic")) + F("sample=") + distance);
   }
 }
 

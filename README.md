@@ -14,6 +14,14 @@ Features:
 
 Consists of 2 modules: [Arduino Nano](./arduino) and [NodeMCU V3](./nodemcu).
 
+## Hardware
+
+- Arduino Nano<sup><span title="original or equivalent">\*</span></sup>
+- NodeMCU V3<sup><span title="original or equivalent">\*</span></sup>
+- Ultrasonic sensor: HC-SR04<sup><span title="original or equivalent">\*</span></sup> or AJ-SR04M<sup><span title="original or equivalent">\*</span></sup>
+- Analog meter 0-5V
+- Buttons/LEDs/etc
+
 ## Design
 
 ### Schematic diagram
