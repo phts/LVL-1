@@ -39,6 +39,7 @@ void connectCallback(String resp)
 
 void measure(bool restartTimer = false, bool byTimer = false, bool recovery = false)
 {
+  recoveryTimer.stop();
   if (startup.isStarting())
   {
     console.info(F("Not started yet. Measure skipped..."));
