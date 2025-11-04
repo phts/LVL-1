@@ -20,8 +20,7 @@ public:
 
   void setup(OnResponseCallback connectCallback, OnStartedCallback startedCallback)
   {
-    console.info(F("PHTS LVL-1"));
-    console.info(F("Staring up..."));
+    console.info(F("Starting up..."));
     _connectCallback = connectCallback;
     _startedCallback = startedCallback;
     _ui->showProgressBar();

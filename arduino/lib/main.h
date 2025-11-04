@@ -64,9 +64,9 @@ void measure(bool restartTimer = false, bool byTimer = false, bool recovery = fa
 
 void startedCallback()
 {
-  console.debug(F("main"), F("started"));
+  console.info(F("Started"));
   measureTimer.start();
-  internet.sendLog(F("info"), F("Started"));
+  internet.sendLog(F("info"), F("Device started"));
   measure(true, true);
 }
 
@@ -80,8 +80,8 @@ void distanceCallback(bool success, Distance distance, Mode mode, Distance sampl
       recoveryTimer.restart();
     }
     ui.showError(UI::ERROR_CODE_SENSOR);
-    console.info(F("Failed to read ultrasonic sensor"));
-    internet.sendLog(F("fatal"), F("Failed to read ultrasonic sensor"));
+    console.info(F("Ultrasonic sensor failed"));
+    internet.sendLog(F("fatal"), F("Ultrasonic sensor failed"));
     return;
   }
   internet.sendLog(F("debug"), F("Distance from ultrasonic sensor: "), distance);
@@ -95,9 +95,9 @@ void transportErrorCallback(String command, byte type, String desc)
 {
   String msg;
   msg.reserve(60);
-  msg.concat(F("Failed command \""));
+  msg.concat(F("Command \""));
   msg.concat(command);
-  msg.concat(F("\": "));
+  msg.concat(F("\" failed: "));
   msg.concat(desc);
   console.info(msg);
   if (startup.isStarting())
