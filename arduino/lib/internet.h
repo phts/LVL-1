@@ -38,13 +38,15 @@ public:
     _transport.tick();
   }
 
-  void sendLevel(float value, byte errorRate, Mode mode)
+  void sendLevel(float value, byte errorRate, Mode mode, String samples)
   {
     String arg;
-    arg.reserve(11);
+    arg.reserve(5 + 1 + 5 + 1 + samples.length());
     arg.concat(value);
     arg.concat(F("|"));
     arg.concat(errorRate);
+    arg.concat(F("|"));
+    arg.concat(samples);
     _transport.exec(mode == MODE_MANUAL ? F("!levelm") : F("!level"), arg, nullptr, _failCallback);
   }
 
