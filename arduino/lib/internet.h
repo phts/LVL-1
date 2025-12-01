@@ -38,13 +38,15 @@ public:
     _transport.tick();
   }
 
-  void sendLevel(float value, byte errorRate, Mode mode)
+  void sendLevel(float value, byte errorRate, Mode mode, String samples)
   {
     String arg;
-    arg.reserve(11);
+    arg.reserve(5 + 1 + 5 + 1 + samples.length());
     arg.concat(value);
     arg.concat(F("|"));
     arg.concat(errorRate);
+    arg.concat(F("|"));
+    arg.concat(samples);
     _transport.exec(mode == MODE_MANUAL ? F("!levelm") : F("!level"), arg, nullptr, _failCallback);
   }
 
@@ -76,13 +78,15 @@ public:
     arg.concat(value);
     sendLog(arg);
   }
-  void sendLog(const __FlashStringHelper *severity, const __FlashStringHelper *message, float value)
+  void sendLog(const __FlashStringHelper *severity, const __FlashStringHelper *m1, float m2, const __FlashStringHelper *m3, byte m4)
   {
     String arg;
     arg.concat(severity);
     arg.concat(F(","));
-    arg.concat(message);
-    arg.concat(value);
+    arg.concat(m1);
+    arg.concat(m2);
+    arg.concat(m3);
+    arg.concat(m4);
     sendLog(arg);
   }
   void sendLog(const __FlashStringHelper *severity, const __FlashStringHelper *m1, String m2)

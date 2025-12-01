@@ -72,7 +72,7 @@ void startedCallback()
 
 void distanceCallback(bool success, Distance distance, Mode mode, Distance samples[], byte samples_len, byte iterations)
 {
-  internet.sendLog(F("debug"), F("Samples: "), helpers.arrayToString(samples, samples_len), F("\nIterations: "), iterations);
+  String samples_str = helpers.arrayToString(samples, samples_len);
   if (!success)
   {
     if (mode == MODE_AUTO)
@@ -81,14 +81,15 @@ void distanceCallback(bool success, Distance distance, Mode mode, Distance sampl
     }
     ui.showError(UI::ERROR_CODE_SENSOR);
     console.info(F("Ultrasonic sensor failed"));
+    internet.sendLog(F("debug"), F("Samples: "), samples_str, F("\nIterations: "), iterations);
     internet.sendLog(F("fatal"), F("Ultrasonic sensor failed"));
     return;
   }
-  internet.sendLog(F("debug"), F("Distance from ultrasonic sensor: "), distance);
+  internet.sendLog(F("debug"), F("Distance from ultrasonic sensor: "), distance, F("\nIterations: "), iterations);
   float lvl = helpers.distanceToLevel(distance);
   byte errorRate = helpers.calcErrorRate(iterations);
   ui.showLevel(lvl);
-  internet.sendLevel(lvl, errorRate, mode);
+  internet.sendLevel(lvl, errorRate, mode, samples_str);
 }
 
 void transportErrorCallback(String command, byte type, String desc)
