@@ -71,7 +71,7 @@ public:
       console.debug(F("Ultrasonic"), F("already requested, request skipped"));
       return false;
     }
-    _samplesTimer.restart();
+    _samplesTimer.start();
     _samplesGathered = 0;
     _iteration = -1;
     _mode = mode;

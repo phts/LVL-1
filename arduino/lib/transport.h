@@ -163,7 +163,7 @@ private:
     else if (_state == STATE_HANDLING)
     {
       _state = STATE_WAITING;
-      _responseTimeoutTimer.restart();
+      _responseTimeoutTimer.start();
       console.debug(F("Transport"), F(">"), _response);
       if (*_processingEntry.onResponse)
       {

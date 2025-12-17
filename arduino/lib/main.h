@@ -54,7 +54,7 @@ void measure(bool restartTimer = false, bool byTimer = false, bool recovery = fa
   ui.showBusy();
   if (restartTimer)
   {
-    measureTimer.restart();
+    measureTimer.start();
   }
   if (restartTimer && !byTimer)
   {
@@ -77,7 +77,7 @@ void distanceCallback(bool success, Distance distance, Mode mode, Distance sampl
   {
     if (mode == MODE_AUTO)
     {
-      recoveryTimer.restart();
+      recoveryTimer.start();
     }
     ui.showError(UI::ERROR_CODE_SENSOR);
     console.info(F("Ultrasonic sensor failed"));

@@ -47,7 +47,7 @@ void toggle()
   }
   else
   {
-    samplesTimer.restart();
+    samplesTimer.start();
   }
 }
 

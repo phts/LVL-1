@@ -49,7 +49,7 @@ public:
     showErrorCode(code);
     if (autohide)
     {
-      _autohideErrorTimer.restart();
+      _autohideErrorTimer.start();
     }
     else
     {
