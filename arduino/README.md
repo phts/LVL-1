@@ -18,3 +18,11 @@ By design it is able to work without internet connection or even without whole [
 - [EncButton](https://github.com/GyverLibs/EncButton)
 - [HCSR04](https://github.com/Martinsos/arduino-lib-hc-sr04) (if such sensor is used)
 - [TimerMs](https://github.com/GyverLibs/TimerMs)
+
+### Emulator
+
+Powered by [Wokwi](https://docs.wokwi.com/vscode/getting-started).
+
+1. Update `diagram.json` [online](https://wokwi.com/projects/new/arduino-nano) if needed.
+2. Arduino IDE → Export Compiled Binary
+3. Trigger command `Wokwi: Start Simulator`

@@ -1,0 +1,56 @@
+{
+  "version": 1,
+  "author": "Phil Tsaryk",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "wokwi-arduino-nano", "id": "nano", "top": 0, "left": 0, "attrs": {} },
+    {
+      "type": "wokwi-led",
+      "id": "led1",
+      "top": -128.4,
+      "left": 52.2,
+      "attrs": { "color": "red", "flip": "1" }
+    },
+    {
+      "type": "wokwi-pushbutton",
+      "id": "btn1",
+      "top": -80.2,
+      "left": -57.6,
+      "rotate": 90,
+      "attrs": { "color": "green", "xray": "1" }
+    },
+    { "type": "wokwi-hc-sr04", "id": "ultrasonic1", "top": -228.9, "left": 91.9, "attrs": {} },
+    { "type": "wokwi-gnd", "id": "gnd1", "top": -96, "left": 181.8, "attrs": {} },
+    { "type": "wokwi-gnd", "id": "gnd2", "top": -9.6, "left": -87, "attrs": {} },
+    { "type": "wokwi-gnd", "id": "gnd3", "top": -57.6, "left": 66.6, "attrs": {} },
+    {
+      "type": "chip-scope",
+      "id": "scope1",
+      "top": -104.58,
+      "left": 225.6,
+      "attrs": {
+        "sampleTimeUs": "100",
+        "sampleTimeMs": "0",
+        "triggerChannel": "0",
+        "triggerMode": "1",
+        "crtColor": "0",
+        "trace0Color": "14",
+        "trace1Color": "12",
+        "trace2Color": "10",
+        "trace3Color": "2"
+      }
+    }
+  ],
+  "connections": [
+    ["led1:A", "nano:7", "green", ["v0"]],
+    ["gnd1:GND", "ultrasonic1:GND", "black", ["v0"]],
+    ["led1:C", "gnd3:GND", "black", ["v0"]],
+    ["ultrasonic1:TRIG", "nano:3", "green", ["v105.6", "h-67.1"]],
+    ["ultrasonic1:ECHO", "nano:2", "green", ["v115.2", "h-67.5"]],
+    ["ultrasonic1:VCC", "nano:4", "red", ["v96", "h-57.6"]],
+    ["btn1:1.r", "nano:8", "green", ["v3.5", "h61.1"]],
+    ["btn1:2.r", "gnd2:GND", "black", ["v0"]],
+    ["scope1:D0", "nano:6", "green", ["h-144", "v86.4", "h-9.6"]]
+  ],
+  "dependencies": { "chip-scope": "github:Dlloydev/Wokwi-Chip-scope@1.0.7" }
+}
