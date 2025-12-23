@@ -192,7 +192,7 @@ void handleRemoteControl()
     measure(true);
     break;
   case RemoteControl::ACTION_SET_MEASURE_INTERVAL:
-    long time = remoteControl.getActionPayload().toInt() * 60 * 60 * 1000;
+    long time = remoteControl.getActionPayload().toInt() * MEASURE_BASE_INTERVAL;
     if (time > 0)
     {
       measureTimer.setTime(time);
