@@ -16,6 +16,7 @@
 #include "internet.h"
 #include "startup.h"
 #include "remote_control.h"
+#include "remote_control_handlers.h"
 
 Button btnMeasure(Config::PIN_BTN_MEASURE);
 Ultrasonic ultrasonic(Config::PIN_ULTRASONIC_SENSOR_TRIGGER, Config::PIN_ULTRASONIC_SENSOR_ECHO, Config::PIN_ULTRASONIC_SENSOR_POWER);
@@ -25,6 +26,7 @@ UI ui(&indicator, LEVEL_WARNING);
 Internet internet(Config::PIN_MODEM_RX, Config::PIN_MODEM_TX);
 Startup startup(&ui, &internet);
 RemoteControl remoteControl(&internet);
+RemoteControlHandlers remoteControlHandlers(&remoteControl);
 
 TimerMs measureTimer(MEASURE_INTERVAL);
 TimerMs recoveryTimer(MEASURE_FATAL_RECOVERY_TIMER, false, true);
@@ -175,37 +177,6 @@ void btnMeasureCallback()
   }
 }
 
-void handleRemoteControl()
-{
-  byte action = remoteControl.getAction();
-  if (action == RemoteControl::ACTION_NOTHING)
-  {
-    return;
-  }
-  remoteControl.markAsProcessed();
-  switch (action)
-  {
-  case RemoteControl::ACTION_MEASURE:
-    measure(false);
-    break;
-  case RemoteControl::ACTION_MEASURE_AND_RESET_TIMER:
-    measure(true);
-    break;
-  case RemoteControl::ACTION_SET_MEASURE_INTERVAL:
-    long time = remoteControl.getActionPayload().toInt() * MEASURE_BASE_INTERVAL;
-    if (time > 0)
-    {
-      measureTimer.setTime(time);
-      internet.sendLog(F("info"), F("Measure interval updated: "), time, F(" ms"));
-    }
-    break;
-  case RemoteControl::ACTION_LED_OFF:
-    byte hours = ui.temporaryDisableLed();
-    internet.sendLog(F("info"), F("LED temporary disabled for "), hours, F(" hours"));
-    break;
-  }
-}
-
 void setup()
 {
   console.setup(CONSOLE_SERIAL_PORT_BAUD);
@@ -216,6 +187,29 @@ void setup()
   ultrasonic.setup(distanceCallback);
   startup.setup(connectCallback, startedCallback);
   remoteControl.setup(remoteControlActionCallback);
+  remoteControlHandlers.setup(
+      []()
+      {
+        measure(false);
+      },
+      []()
+      {
+        measure(false);
+      },
+      []()
+      {
+        long time = remoteControl.getActionPayload().toInt() * MEASURE_BASE_INTERVAL;
+        if (time > 0)
+        {
+          measureTimer.setTime(time);
+          internet.sendLog(F("info"), F("Measure interval updated: "), time, F(" ms"));
+        }
+      },
+      []()
+      {
+        byte hours = ui.temporaryDisableLed();
+        internet.sendLog(F("info"), F("LED temporary disabled for "), hours, F(" hours"));
+      });
 }
 
 void loop()
@@ -234,7 +228,7 @@ void loop()
   ultrasonic.tick();
   startup.tick();
   remoteControl.tick();
-  handleRemoteControl();
+  remoteControlHandlers.tick();
 }
 
 #endif
