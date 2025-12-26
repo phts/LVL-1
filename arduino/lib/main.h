@@ -27,7 +27,7 @@ Startup startup(&ui, &internet);
 RemoteControl remoteControl(&internet);
 
 TimerMs measureTimer(MEASURE_INTERVAL);
-TimerMs recoveryTimer(MEASURE_FATAL_RECOVERY_TIMER, false, 1);
+TimerMs recoveryTimer(MEASURE_FATAL_RECOVERY_TIMER, false, true);
 
 void connectCallback(String resp)
 {
@@ -198,6 +198,10 @@ void handleRemoteControl()
       measureTimer.setTime(time);
       internet.sendLog(F("info"), F("Measure interval updated: "), time, F(" ms"));
     }
+    break;
+  case RemoteControl::ACTION_LED_OFF:
+    byte hours = ui.temporaryDisableLed();
+    internet.sendLog(F("info"), F("LED temporary disabled for "), hours, F(" hours"));
     break;
   }
 }

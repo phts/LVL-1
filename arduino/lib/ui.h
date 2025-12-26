@@ -15,7 +15,8 @@ public:
   static const byte ERROR_CODE_HTTP = 4;
   static const byte ERRORS_SIZE = 6;
 
-  UI(Indicator *indicator, byte warningLevel) : _autohideErrorTimer(UI_ERROR_AUTOHIDE_DELAY, 0, 1)
+  UI(Indicator *indicator, byte warningLevel) : _autohideErrorTimer(UI_ERROR_AUTOHIDE_DELAY, false, true),
+                                                _disableLedTimer(UI_LED_DISABLE_TIMER, false, true)
   {
     _indicator = indicator;
     _warningLevel = warningLevel;
@@ -32,6 +33,10 @@ public:
     if (_autohideErrorTimer.tick())
     {
       hideTempError();
+    }
+    if (_disableLedTimer.tick())
+    {
+      _indicator->enableLed();
     }
   }
 
@@ -97,12 +102,20 @@ public:
     return _progress;
   }
 
+  byte temporaryDisableLed()
+  {
+    _disableLedTimer.start();
+    _indicator->disableLed();
+    return UI_LED_DISABLE_TIMER / 1000 / 60 / 60;
+  }
+
 private:
   Indicator *_indicator;
   byte _warningLevel;
   byte _level = 0;
   byte _cachedError = ERROR_CODE_NONE;
   TimerMs _autohideErrorTimer;
+  TimerMs _disableLedTimer;
   byte _progress = 0;
 
   void showCachedLevel()

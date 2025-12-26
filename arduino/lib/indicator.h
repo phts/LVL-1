@@ -53,6 +53,16 @@ public:
     return _level;
   }
 
+  void disableLed()
+  {
+    _led->disable();
+  }
+
+  void enableLed()
+  {
+    _led->enable();
+  }
+
   void setLed(byte type)
   {
     console.debug(F("Indicator"), F("LED:"), type);

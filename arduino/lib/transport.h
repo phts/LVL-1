@@ -26,8 +26,8 @@ public:
   static const byte FAILURE_TYPE_EXEC_TIMEOUT = 2;
   static const byte FAILURE_TYPE_RESP_TIMEOUT = 3;
 
-  Transport(SoftwareSerial *serial) : _executionTimeoutTimer(TRANSPORT_TIMEOUT_EXECUTION, 0, 1),
-                                      _responseTimeoutTimer(TRANSPORT_TIMEOUT_RESPONSE, 0, 1),
+  Transport(SoftwareSerial *serial) : _executionTimeoutTimer(TRANSPORT_TIMEOUT_EXECUTION, false, true),
+                                      _responseTimeoutTimer(TRANSPORT_TIMEOUT_RESPONSE, false, true),
                                       _queue(Transport::QUEUE_MAX_LEN)
   {
     _serial = serial;

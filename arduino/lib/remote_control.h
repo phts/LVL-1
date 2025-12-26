@@ -13,6 +13,7 @@ public:
   static const byte ACTION_MEASURE = 1;
   static const byte ACTION_MEASURE_AND_RESET_TIMER = 2;
   static const byte ACTION_SET_MEASURE_INTERVAL = 3;
+  static const byte ACTION_LED_OFF = 4;
 
   RemoteControl(Internet *internet) : _timer(REMOTE_CONTROL_INIT_DELAY)
   {
@@ -59,6 +60,10 @@ public:
     else if (nextAction == F("interval"))
     {
       _nextAction = ACTION_SET_MEASURE_INTERVAL;
+    }
+    else if (nextAction == F("led-off"))
+    {
+      _nextAction = ACTION_LED_OFF;
     }
     else
     {
