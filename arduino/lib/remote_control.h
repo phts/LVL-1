@@ -20,9 +20,8 @@ public:
     _internet = internet;
   }
 
-  void setup(OnResponseCallback cb)
+  void setup()
   {
-    _onResponse = cb;
     _timer.start();
     _currentId.reserve(14);
     _nextId.reserve(14);
@@ -36,7 +35,8 @@ public:
       return;
     }
     console.debug(F("RemoteControl"), F("check"));
-    _internet->getRemoteControl(_onResponse);
+    _internet->getRemoteControl([this](String response)
+                                { this->actionCallback(response); });
   }
 
   void setNextId(String nextId)
@@ -141,7 +141,6 @@ public:
 private:
   TimerMs _timer;
   Internet *_internet;
-  OnResponseCallback _onResponse;
   byte _nextAction = ACTION_NOTHING;
   byte _currentAction = ACTION_NOTHING;
   String _nextId;
@@ -149,6 +148,26 @@ private:
   String _nextActionPayload;
   String _currentActionPayload;
   bool _initialized = false;
+
+  void actionCallback(String resp)
+  {
+    if (Response::equals(resp, F("id!")))
+    {
+      this->setNextId(Response::valueOf(resp));
+    }
+    else if (Response::equals(resp, F("action!")))
+    {
+      this->setNextAction(Response::valueOf(resp));
+    }
+    else if (Response::equals(resp, F("payload!")))
+    {
+      this->setNextActionPayload(Response::valueOf(resp));
+    }
+    else if (Response::isSuccess(resp))
+    {
+      this->saveNext();
+    }
+  }
 };
 
 #endif

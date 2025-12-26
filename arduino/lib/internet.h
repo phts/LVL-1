@@ -110,7 +110,8 @@ public:
     sendLog(arg);
   }
 
-  void getRemoteControl(OnResponseCallback onResponse)
+  template <typename F>
+  void getRemoteControl(F onResponse)
   {
     _transport.exec(F("!rc"), onResponse, _failCallback);
   }

@@ -143,26 +143,6 @@ void transportErrorCallback(String command, byte type, String desc)
   internet.sendLog(F("error"), log);
 }
 
-void remoteControlActionCallback(String resp)
-{
-  if (Response::equals(resp, F("id!")))
-  {
-    remoteControl.setNextId(Response::valueOf(resp));
-  }
-  else if (Response::equals(resp, F("action!")))
-  {
-    remoteControl.setNextAction(Response::valueOf(resp));
-  }
-  else if (Response::equals(resp, F("payload!")))
-  {
-    remoteControl.setNextActionPayload(Response::valueOf(resp));
-  }
-  else if (Response::isSuccess(resp))
-  {
-    remoteControl.saveNext();
-  }
-}
-
 void btnMeasureCallback()
 {
   switch (btnMeasure.action())
@@ -187,7 +167,7 @@ void setup()
   internet.setup(transportErrorCallback);
   ultrasonic.setup(distanceCallback);
   startup.setup(connectCallback, startedCallback);
-  remoteControl.setup(remoteControlActionCallback);
+  remoteControl.setup();
   remoteControlHandlers.setup(
       []()
       {
