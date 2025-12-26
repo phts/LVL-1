@@ -16,6 +16,11 @@ public:
   {
     Serial.println(str);
   }
+  void info(const __FlashStringHelper *s1, const __FlashStringHelper *s2)
+  {
+    Serial.print(s1);
+    Serial.println(s2);
+  }
 #if DEBUG
   void debug(const __FlashStringHelper *str)
   {

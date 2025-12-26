@@ -5,10 +5,13 @@
   "private": true,
   "author": "Phil Tsaryk",
   "scripts": {
-    "format": "prettier --write '**/*.{md,json}'"
+    "arduino:version": "bash arduino/scripts/version.sh",
+    "format": "prettier --write '**/*.{md,json}'",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@phts/prettier-config": "^1.2.0",
+    "husky": "^9.1.7",
     "prettier": "^3.7.4"
   }
 }

@@ -1,6 +1,7 @@
 #ifndef settings_h
 #define settings_h
 
+#define VERSION F("N/A")
 #define DEBUG false
 #define DEBUG_RXTX false
 
@@ -41,5 +42,8 @@
 
 #if __has_include("settings.local.h")
 #include "settings.local.h"
+#endif
+#if __has_include("version.h")
+#include "version.h"
 #endif
 #endif

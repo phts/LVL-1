@@ -7,3 +7,5 @@ node_modules/
 !/libraries/TransportProtocol/*
 
 *.local.h
+
+arduino/lib/version.h
