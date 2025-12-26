@@ -181,6 +181,7 @@ void setup()
 {
   console.setup(CONSOLE_SERIAL_PORT_BAUD);
   console.info(F("PHTS LVL-1"));
+  console.info(VERSION);
   btnMeasure.attach(btnMeasureCallback);
   ui.setup();
   internet.setup(transportErrorCallback);
