@@ -1,9 +1,6 @@
-.vscode/
 build/
 node_modules/
 
 /libraries/*
 !/libraries/TransportProtocol/
 !/libraries/TransportProtocol/*
-
-*.local.h
